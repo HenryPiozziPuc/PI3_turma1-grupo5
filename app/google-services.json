@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "406515259296",
+    "project_id": "superid-grupo-pi3-turma-1-5",
+    "storage_bucket": "superid-grupo-pi3-turma-1-5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406515259296:android:fada0b62c31577c362b6c5",
+        "android_client_info": {
+          "package_name": "com.example.superidg1015"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkFi-bw6nv6Suh8bWoIhm613uPwIR44BQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
