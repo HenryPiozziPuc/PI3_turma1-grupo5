@@ -1,4 +1,4 @@
-package com.example.superidg1015
+package com.example.pi3_turma1grupo5
 
 import org.junit.Test
 

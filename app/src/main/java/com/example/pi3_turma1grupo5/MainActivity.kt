@@ -1,4 +1,4 @@
-package com.example.superidg1015
+package com.example.pi3_turma1grupo5
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,14 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.superidg1015.ui.theme.SuperIDg1015Theme
+import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SuperIDg1015Theme {
+            PI3_turma1grupo5Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
                         name = "Android",
@@ -41,7 +41,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    SuperIDg1015Theme {
+    PI3_turma1grupo5Theme {
         Greeting("Android")
     }
 }

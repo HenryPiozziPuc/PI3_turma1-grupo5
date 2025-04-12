@@ -1,4 +1,4 @@
-package com.example.superidg1015.ui.theme
+package com.example.pi3_turma1grupo5.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

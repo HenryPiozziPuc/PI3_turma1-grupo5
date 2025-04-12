@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.superidg1015"
+    namespace = "com.example.pi3_turma1grupo5"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.superidg1015"
+        applicationId = "com.example.pi3_turma1grupo5"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

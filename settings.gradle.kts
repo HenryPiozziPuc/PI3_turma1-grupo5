@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SuperIDg1015"
+rootProject.name = "Pi3_turma1grupo5"
 include(":app")
