@@ -1,4 +1,4 @@
-package com.example.superidg1015.ui.theme
+package com.example.pi3_turma1grupo5.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -34,7 +34,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun SuperIDg1015Theme(
+fun PI3_turma1grupo5Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
