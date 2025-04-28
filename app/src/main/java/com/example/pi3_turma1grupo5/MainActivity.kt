@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                                         */
 @Composable
 fun MainScreen() {
-    var presses by remember { mutableIntStateOf(0) }
+    var mostrarMenu by remember {mutableStateOf(false)} // controlar a visibilidade do menu suspenso
 
     Scaffold(
         topBar = {
@@ -47,13 +48,33 @@ fun MainScreen() {
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ),
                 actions = {
-                    IconButton(onClick = { /* lógica do botão de adicionar senha */ }) {
-                        Icon(Icons.Default.Add, "Adicionar nova senha")
+                    IconButton(onClick = { mostrarMenu = true }) {
+                        Icon(Icons.Default.Add, "Adicionar")
                     }
-                    IconButton(onClick = { /* Search action */ }) {
+                    //Menu suspenso "+"
+                    DropdownMenu(
+                        expanded = mostrarMenu,
+                        onDismissRequest = {mostrarMenu = false}// se o usuário clicar fora o menu fecha
+                    ) {
+                        // 1 opção
+                        DropdownMenuItem(
+                            text = { Text("Adicionar nova senha")},
+                            onClick = {
+                                mostrarMenu = false// fecha o menu depois de escolher a opção
+                            }
+                        )
+                        // 2 opção
+                        DropdownMenuItem(
+                            text = {Text("Adicionar nova categoria")},
+                            onClick = {
+                                mostrarMenu = false
+                            }
+                        )
+                    }
+                    IconButton(onClick = { /* lógica de busca */ }) {
                         Icon(Icons.Default.Search, "Procurar senha")
                     }
-                    IconButton(onClick = { /* Settings action */ }) {
+                    IconButton(onClick = { /* configurações */ }) {
                         Icon(Icons.Default.Settings, "Configurações")
                     }
                 }
@@ -82,32 +103,31 @@ fun MainScreen() {
                 style = MaterialTheme.typography.headlineSmall //small para as seções
             )
 
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = "Sites Web",
-                style = MaterialTheme.typography.titleMedium, // titleMedium é para subseções
-                color = MaterialTheme.colorScheme.primary
-            )
-            Divider()
+            MoldeCategoria("Sites Web")
 
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = "Aplicativos",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Divider()
+            MoldeCategoria("Aplicativos")
 
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = "Teclados de acesso físico",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Divider()
+            MoldeCategoria("Teclados de acesso físico")
+
         }
     }
 }
+
+@Composable
+fun MoldeCategoria(titulo: String){
+    Column(
+        modifier = Modifier.padding(vertical = 8.dp) // espaço de cada categoria
+    ) {
+        Text(
+            modifier = Modifier.padding(bottom = 4.dp), // bottom -> espaço entre o texto e o divider
+            text = titulo,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Divider(color = MaterialTheme.colorScheme.primary, thickness = 2.dp)
+    }
+}
+
+
 
 @Preview(showBackground = true)
 @Composable
