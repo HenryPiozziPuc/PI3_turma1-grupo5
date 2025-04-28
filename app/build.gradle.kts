@@ -65,4 +65,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     // authentication
     implementation("com.google.firebase:firebase-auth-ktx:23.2.0")
+
+    implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
 }
