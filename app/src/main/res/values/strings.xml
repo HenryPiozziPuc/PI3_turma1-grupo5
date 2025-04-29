@@ -2,4 +2,9 @@
     <string name="app_name">SuperIDg1015</string>
     <string name="title_activity_welcome">WelcomeActivity</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_qrcode_scanner">QRCodeScannerActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_password_recovry">PasswordRecovryActivity</string>
+    <string name="title_activity_sing_up">SingUpActivity</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
 </resources>
