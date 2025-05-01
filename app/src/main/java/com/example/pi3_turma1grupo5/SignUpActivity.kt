@@ -8,16 +8,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +37,8 @@ import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.example.pi3_turma1grupo5.ui.theme.Typography
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.pi3_turma1grupo5.ui.theme.BackgroundLight
+import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
 
 class SignUpActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,18 +54,18 @@ class SignUpActivity : ComponentActivity() {
 
 @Composable
 fun SignUpScreen() {
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var masterPassword by remember { mutableStateOf("") }
+    var termsAccepted by remember { mutableStateOf(false) }
+    var showTermsDialog by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0.0f to Color(0xFFD2D5E2),
-                        0.33f to Color(0xFFD2D5E2),
-                        0.69f to Color(0xFF5770AF),
-                        0.90f to Color(0xFF455E9E),
-                        1.0f to Color(0xFF1033BC)
-                    )
+                    colorStops = BackgroundLight
                 )
             )
     ) {
@@ -72,7 +78,7 @@ fun SignUpScreen() {
             Text(
                 text = "Super ID",
                 style = Typography.displayMedium,
-                color = Color(0xFF122556)
+                color = DarkBlue
             )
 
             Spacer(modifier = Modifier.height(80.dp))
@@ -81,14 +87,10 @@ fun SignUpScreen() {
                 modifier = Modifier
                     .fillMaxWidth(0.85f)
                     .background(Color.White, shape = RoundedCornerShape(16.dp))
-                    .border(2.dp, Color(0xFF122556), RoundedCornerShape(16.dp))
+                    .border(2.dp, DarkBlue, RoundedCornerShape(16.dp))
                     .padding(24.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    var name by remember { mutableStateOf("") }
-                    var email by remember { mutableStateOf("") }
-                    var masterPassword by remember { mutableStateOf("") }
-
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
@@ -115,12 +117,32 @@ fun SignUpScreen() {
                         visualTransformation = PasswordVisualTransformation()
                     )
 
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Checkbox(
+                            checked = termsAccepted,
+                            onCheckedChange = { termsAccepted = it }
+                        )
+                        Text(text = "Eu aceito os ")
+                        TextButton(onClick = { showTermsDialog = true }) {
+                            Text("termos e condições")
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = { /* ação de criar conta */ },
+                        onClick = {
+                            if (termsAccepted) {
+                                // TODO criação de conta
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF122556),
+                            containerColor = DarkBlue,
                             contentColor = Color.White
                         ),
                         modifier = Modifier
@@ -131,15 +153,32 @@ fun SignUpScreen() {
                                 shape = RoundedCornerShape(12.dp),
                                 ambientColor = Color.Black.copy(alpha = 0.3f),
                                 spotColor = Color.Black.copy(alpha = 0.3f)
-                            )
+                            ),
+                        enabled = termsAccepted && email.contains("@") && email.contains(".") && masterPassword.isNotBlank()
                     ) {
                         Text("Criar conta")
                     }
                 }
             }
         }
+
+        if (showTermsDialog) {
+            AlertDialog(
+                onDismissRequest = { showTermsDialog = false },
+                title = { Text("Termos e Condições") },
+                text = {
+                    Text("Colocar termos e condições depois")
+                },
+                confirmButton = {
+                    TextButton(onClick = { showTermsDialog = false }) {
+                        Text("Fechar")
+                    }
+                }
+            )
+        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
