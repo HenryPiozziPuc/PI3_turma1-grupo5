@@ -39,6 +39,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.pi3_turma1grupo5.ui.theme.BackgroundLight
 import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class SignUpActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,9 +139,7 @@ fun SignUpScreen() {
 
                     Button(
                         onClick = {
-                            if (termsAccepted) {
-                                // TODO criação de conta
-                            }
+                            CriarConta(name, email, masterPassword)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = DarkBlue,
@@ -177,6 +177,11 @@ fun SignUpScreen() {
             )
         }
     }
+}
+
+fun CriarConta(name: String, email: String, masterPassword: String) {
+    val auth = Firebase.auth
+    auth.createUserWithEmailAndPassword(email, masterPassword)
 }
 
 
