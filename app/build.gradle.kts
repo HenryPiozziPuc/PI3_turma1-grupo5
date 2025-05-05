@@ -66,5 +66,5 @@ dependencies {
     // authentication
     implementation("com.google.firebase:firebase-auth-ktx:23.2.0")
 
-    implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
 }
