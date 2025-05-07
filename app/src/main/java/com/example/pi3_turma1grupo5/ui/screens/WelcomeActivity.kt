@@ -1,4 +1,4 @@
-package com.example.pi3_turma1grupo5
+package com.example.pi3_turma1grupo5.ui.screens
 
 import android.content.Intent
 import android.os.Bundle
@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.pi3_turma1grupo5.ui.theme.Typography
 import androidx.compose.ui.res.painterResource
+import com.example.pi3_turma1grupo5.R
 
 class WelcomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

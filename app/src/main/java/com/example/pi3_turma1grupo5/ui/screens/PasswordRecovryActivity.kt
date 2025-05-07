@@ -1,4 +1,4 @@
-package com.example.pi3_turma1grupo5
+package com.example.pi3_turma1grupo5.ui.screens
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

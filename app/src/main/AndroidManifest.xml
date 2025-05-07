@@ -13,32 +13,32 @@
         android:theme="@style/Theme.Pi3_turma1grupo5"
         tools:targetApi="31">
         <activity
-            android:name=".SignUpActivity"
+            android:name=".ui.screens.SignUpActivity"
             android:exported="false"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/Theme.Pi3_turma1grupo5" />
         <activity
-            android:name=".PasswordRecovryActivity"
+            android:name=".ui.screens.PasswordRecovryActivity"
             android:exported="false"
             android:label="@string/title_activity_password_recovry"
             android:theme="@style/Theme.Pi3_turma1grupo5" />
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".ui.screens.WelcomeActivity"
             android:exported="false"
             android:label="@string/title_activity_welcome"
             android:theme="@style/Theme.Pi3_turma1grupo5" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.screens.LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Pi3_turma1grupo5" />
         <activity
-            android:name=".QRCodeScannerActivity"
+            android:name=".ui.screens.QRCodeScannerActivity"
             android:exported="false"
             android:label="@string/title_activity_qrcode_scanner"
             android:theme="@style/Theme.Pi3_turma1grupo5" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.screens.MainActivity"
             android:exported="false"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.Pi3_turma1grupo5" />
