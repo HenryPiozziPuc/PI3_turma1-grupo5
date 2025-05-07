@@ -1,6 +1,8 @@
 package com.example.pi3_turma1grupo5
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,22 +24,63 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview // <-- IMPORTANTE pra funcionar o Preview!
+import android.util.Log
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class LoginActivity: ComponentActivity() {
+
+    private val auth: FirebaseAuth = Firebase.auth
+    private val tag = "LoginAuth"
+
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // verifica se existe um usuário logado (deve ser colocado aqui, antes de mostrar a UI do login)
+        if(auth.currentUser != null){
+            startActivity(Intent(this, MainActivity::class.java)) // função que inicia e redireciona para a tela main
+            finish() // encerra a LoginActivity
+
+        }
         setContent {
             PI3_turma1grupo5Theme {
-                LoginScreenPreview()
+                LoginScreen(onLoginAttempt = { email, password ->
+                    loginUserAuth(email, password)
+                })
             }
         }
     }
+
+
+    // função para o usuário fazer o login
+    private fun loginUserAuth(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Log.d(tag, "Login realizado com sucesso!")
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                } else {
+                    Log.w(tag, "Erro no login.", task.exception)
+                    Toast.makeText(
+                        this,
+                        "falha na autenticação.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+
 }
 
+
+
+
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onLoginAttempt: (String, String) -> Unit) {
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
 
@@ -124,7 +167,7 @@ fun LoginScreen() {
                     )
 
                     Button(
-                        onClick = { /* Ação de login */ },
+                        onClick = { onLoginAttempt(email,senha) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0B1F56)),
                         shape = RoundedCornerShape(50),
                         modifier = Modifier
@@ -149,5 +192,7 @@ fun LoginScreen() {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    PI3_turma1grupo5Theme {
+        LoginScreen(onLoginAttempt = {_, _ -> })
+    }
 }
