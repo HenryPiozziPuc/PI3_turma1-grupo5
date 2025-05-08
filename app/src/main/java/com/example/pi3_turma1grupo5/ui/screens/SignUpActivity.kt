@@ -41,15 +41,15 @@ import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.example.pi3_turma1grupo5.ui.theme.Typography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-//import android.Manifest
 import android.content.Context
-//import android.content.pm.PackageManager
-//import android.os.Build
-//import android.telephony.TelephonyManager
-//import androidx.annotation.RequiresPermission
+import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
-//import androidx.core.app.ActivityCompat
-import com.google.firebase.firestore.firestore
+import android.provider.Settings
+import android.util.Log
+import android.widget.Toast
+import com.google.firebase.firestore.FirebaseFirestore
+
+data class SenhaError(var hasError: Boolean, val errorCode: Int)
 
 class SignUpActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,12 +68,13 @@ fun SignUpScreen() {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var masterPassword by remember { mutableStateOf("") }
+
     var termsAccepted by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    // Estados para erros
+
     var emailError by remember { mutableStateOf(false) }
-    var senhaError by remember { mutableStateOf(false) }
+    var senhaError by remember { mutableStateOf(SenhaError(false, 0)) }
 
     Box(
         modifier = Modifier
@@ -107,7 +108,6 @@ fun SignUpScreen() {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    // Campo Nome
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
@@ -117,7 +117,6 @@ fun SignUpScreen() {
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Campo Email com erro
                     OutlinedTextField(
                         value = email,
                         onValueChange = {
@@ -139,30 +138,36 @@ fun SignUpScreen() {
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Campo Senha Mestre com erro
                     OutlinedTextField(
                         value = masterPassword,
                         onValueChange = {
                             masterPassword = it
-                            senhaError = false
+                            senhaError.hasError = false
                         },
                         label = { Text("Senha Mestre") },
-                        isError = senhaError,
+                        isError = senhaError.hasError,
                         modifier = Modifier.fillMaxWidth(),
                         visualTransformation = PasswordVisualTransformation()
                     )
-                    if (senhaError) {
+                    if (senhaError.hasError) {
+                        if(senhaError.errorCode == 0)
                         Text(
                             text = "Senha é obrigatória",
                             color = Color.Red,
                             style = Typography.bodySmall,
                             modifier = Modifier.align(Alignment.Start)
                         )
+                        if(senhaError.errorCode == 1)
+                            Text(
+                                text = "Senha precisa ter 6 caracteres",
+                                color = Color.Red,
+                                style = Typography.bodySmall,
+                                modifier = Modifier.align(Alignment.Start)
+                            )
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Checkbox termos
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
@@ -179,15 +184,21 @@ fun SignUpScreen() {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Botão criar conta
                     Button(
                         onClick = {
                             emailError = !isEmailValid(email)
-                            senhaError = masterPassword.isBlank()
+                            if(!masterPassword.isNotBlank()){
+                                senhaError = SenhaError(true, 0)
+                            }else if(masterPassword.length < 6) {
+                                senhaError = SenhaError(true, 1)
+                            }
 
-                            if (!emailError && !senhaError && termsAccepted) {
+                            if (!emailError && !senhaError.hasError && termsAccepted) {
                                 CriarConta(context, name, email, masterPassword)
                             }
+
+                            val intent = Intent(context, MainActivity::class.java)
+                            context.startActivity(intent)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = DarkBlue,
@@ -210,7 +221,6 @@ fun SignUpScreen() {
             }
         }
 
-        // Diálogo dos termos
         if (showTermsDialog) {
             AlertDialog(
                 onDismissRequest = { showTermsDialog = false },
@@ -232,63 +242,51 @@ fun CriarConta(
     context: Context,
     name: String,
     email: String,
-    masterPassword: String,
-    onSuccess: () -> Unit = {},
-    onFailure: (Exception) -> Unit = {}
+    masterPassword: String
 ) {
     val auth = Firebase.auth
-    val db = Firebase.firestore
+    val firestore = FirebaseFirestore.getInstance()
+
+    val deviceId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
 
     auth.createUserWithEmailAndPassword(email, masterPassword)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val uid = auth.currentUser?.uid ?: return@addOnCompleteListener
+                val user = auth.currentUser
+                val uid = user?.uid
 
-                // Comentado temporariamente conforme solicitado
-                // val imei = getImei(context)
+                if (uid != null) {
+                    val userDoc = hashMapOf(
+                        "uid" to uid,
+                        "deviceId" to deviceId,
+                        "nome" to name,
+                        "email" to email
+                    )
 
-                val userData = hashMapOf(
-                    "uid" to uid,
-                    "name" to name,
-                    "email" to email,
-                    // "imei" to imei
-                )
+                    firestore.collection("usuarios").document(uid)
+                        .set(userDoc)
+                        .addOnSuccessListener {
+                            firestore.collection("usuarios").document(uid)
+                                .collection("senhas")
+                                .document("placeholder")
+                                .set(hashMapOf("placeholder" to true))
 
-                db.collection("usuarios").document(uid)
-                    .set(userData)
-                    .addOnSuccessListener {
-                        // Cria uma subcoleção de senhas (inicialmente vazia)
-                        val emptySenhaList = hashMapOf<String, Any>() // Pode ser ajustado conforme estrutura
-                        db.collection("usuarios").document(uid)
-                            .collection("senhas")
-                            .document("exemplo")
-                            .set(emptySenhaList)
-                            .addOnSuccessListener { onSuccess() }
-                            .addOnFailureListener { onFailure(it) }
-                    }
-                    .addOnFailureListener { onFailure(it) }
+                            Toast.makeText(context, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Erro ao salvar dados no Firestore", Toast.LENGTH_SHORT).show()
+                        }
+                }
             } else {
-                task.exception?.let { onFailure(it) }
+                val exceptionMessage = task.exception?.message ?: ""
+
+                if (!exceptionMessage.contains("email")) {
+                    Toast.makeText(context, "Erro ao criar conta: $exceptionMessage", Toast.LENGTH_SHORT).show()
+                    Log.e("CriarConta", "Erro", task.exception)
+                }
             }
         }
 }
-
-
-/*
-@RequiresPermission("android.permission.READ_PRIVILEGED_PHONE_STATE")
-fun getImei(context: Context): String {
-    val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-
-    return if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-        "PERMISSAO_NECESSARIA"
-    } else {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            telephonyManager.imei ?: "IMEI_NAO_DISPONIVEL"
-        } else {
-            telephonyManager.deviceId ?: "IMEI_NAO_DISPONIVEL"
-        }
-    }
-}*/
 
 fun isEmailValid(email: String): Boolean {
     return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
