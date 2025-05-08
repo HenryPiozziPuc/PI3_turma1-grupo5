@@ -41,6 +41,15 @@ import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.example.pi3_turma1grupo5.ui.theme.Typography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.telephony.TelephonyManager
+import androidx.annotation.RequiresPermission
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
+import com.google.firebase.firestore.firestore
 
 class SignUpActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +70,7 @@ fun SignUpScreen() {
     var masterPassword by remember { mutableStateOf("") }
     var termsAccepted by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     // Estados para erros
     var emailError by remember { mutableStateOf(false) }
     var senhaError by remember { mutableStateOf(false) }
@@ -177,7 +186,7 @@ fun SignUpScreen() {
                             senhaError = masterPassword.isBlank()
 
                             if (!emailError && !senhaError && termsAccepted) {
-                                CriarConta(name, email, masterPassword)
+                                CriarConta(context, name, email, masterPassword)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -219,10 +228,67 @@ fun SignUpScreen() {
     }
 }
 
-fun CriarConta(name: String, email: String, masterPassword: String) {
+fun CriarConta(
+    context: Context,
+    name: String,
+    email: String,
+    masterPassword: String,
+    onSuccess: () -> Unit = {},
+    onFailure: (Exception) -> Unit = {}
+) {
     val auth = Firebase.auth
+    val db = Firebase.firestore
+
     auth.createUserWithEmailAndPassword(email, masterPassword)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val uid = auth.currentUser?.uid ?: return@addOnCompleteListener
+
+                // Comentado temporariamente conforme solicitado
+                // val imei = getImei(context)
+
+                val userData = hashMapOf(
+                    "uid" to uid,
+                    "name" to name,
+                    "email" to email,
+                    // "imei" to imei
+                )
+
+                db.collection("usuarios").document(uid)
+                    .set(userData)
+                    .addOnSuccessListener {
+                        // Cria uma subcoleção de senhas (inicialmente vazia)
+                        val emptySenhaList = hashMapOf<String, Any>() // Pode ser ajustado conforme estrutura
+                        db.collection("usuarios").document(uid)
+                            .collection("senhas")
+                            .document("exemplo")
+                            .set(emptySenhaList)
+                            .addOnSuccessListener { onSuccess() }
+                            .addOnFailureListener { onFailure(it) }
+                    }
+                    .addOnFailureListener { onFailure(it) }
+            } else {
+                task.exception?.let { onFailure(it) }
+            }
+        }
 }
+
+
+/*
+@RequiresPermission("android.permission.READ_PRIVILEGED_PHONE_STATE")
+fun getImei(context: Context): String {
+    val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+
+    return if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        "PERMISSAO_NECESSARIA"
+    } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            telephonyManager.imei ?: "IMEI_NAO_DISPONIVEL"
+        } else {
+            telephonyManager.deviceId ?: "IMEI_NAO_DISPONIVEL"
+        }
+    }
+}*/
 
 fun isEmailValid(email: String): Boolean {
     return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
