@@ -33,6 +33,10 @@ import androidx.compose.ui.unit.dp
 import com.example.pi3_turma1grupo5.ui.theme.Typography
 import androidx.compose.ui.res.painterResource
 import com.example.pi3_turma1grupo5.R
+import com.example.pi3_turma1grupo5.ui.theme.BackgroundLight
+import com.example.pi3_turma1grupo5.ui.theme.Blue
+import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
+import com.example.pi3_turma1grupo5.ui.theme.LightBlue
 
 class WelcomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,13 +58,7 @@ fun WelcomeScreen() {
         .fillMaxSize()
         .background(
             brush = Brush.verticalGradient(
-                colorStops = arrayOf(
-                    0.0f to Color(0xFFD2D5E2),
-                    0.33f to Color(0xFFD2D5E2),
-                    0.69f to Color(0xFF5770AF),
-                    0.90f to Color(0xFF455E9E),
-                    1.0f to Color(0xFF1033BC)
-                )
+                colorStops = BackgroundLight
             )
         )
     ) {
@@ -73,7 +71,7 @@ fun WelcomeScreen() {
             val canvasWidth = size.width
             val canvasHeight = size.height
             drawArc(
-                color = Color(0xFFCEE1F6).copy(alpha = 0.75f),
+                color = LightBlue.copy(alpha = 0.75f),
                 startAngle = 180f,
                 sweepAngle = 180f,
                 useCenter = true,
@@ -105,7 +103,7 @@ fun WelcomeScreen() {
             Text(
                 text = "Super ID",
                 style = Typography.displayMedium,
-                color = Color(0xFF122556)
+                color = DarkBlue
             )
 
             Spacer(modifier = Modifier.height(150.dp))
@@ -113,7 +111,7 @@ fun WelcomeScreen() {
             Text(
                 text = "Bem-vindo!",
                 style = Typography.titleLarge,
-                color = Color(0xFF1033BC)
+                color = Blue
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -124,7 +122,7 @@ fun WelcomeScreen() {
                     context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF122556),
+                    containerColor = DarkBlue,
                     contentColor = Color.White
                 ),
 
@@ -133,7 +131,7 @@ fun WelcomeScreen() {
                     .height(50.dp)
                     .shadow(
                         elevation = 8.dp,
-                        shape = RoundedCornerShape(12.dp), // borda arredondada opcional
+                        shape = RoundedCornerShape(12.dp),
                         ambientColor = Color.Black.copy(alpha = 0.3f),
                         spotColor = Color.Black.copy(alpha = 0.3f)
                     )
@@ -149,7 +147,7 @@ fun WelcomeScreen() {
                     context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF122556),
+                    containerColor = DarkBlue,
                     contentColor = Color.White
                 ),
                 modifier = Modifier
