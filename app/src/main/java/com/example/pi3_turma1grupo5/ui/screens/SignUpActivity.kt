@@ -41,14 +41,14 @@ import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.example.pi3_turma1grupo5.ui.theme.Typography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import android.Manifest
+//import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import android.telephony.TelephonyManager
-import androidx.annotation.RequiresPermission
+//import android.content.pm.PackageManager
+//import android.os.Build
+//import android.telephony.TelephonyManager
+//import androidx.annotation.RequiresPermission
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.ActivityCompat
+//import androidx.core.app.ActivityCompat
 import com.google.firebase.firestore.firestore
 
 class SignUpActivity : ComponentActivity() {
