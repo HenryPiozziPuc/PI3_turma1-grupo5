@@ -24,9 +24,15 @@
             android:theme="@style/Theme.Pi3_turma1grupo5" />
         <activity
             android:name=".ui.screens.WelcomeActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_welcome"
-            android:theme="@style/Theme.Pi3_turma1grupo5" />
+            android:theme="@style/Theme.Pi3_turma1grupo5">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.screens.LoginActivity"
             android:exported="false"

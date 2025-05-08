@@ -62,6 +62,10 @@ fun SignUpScreen() {
     var termsAccepted by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
 
+    // Estados para erros
+    var emailError by remember { mutableStateOf(false) }
+    var senhaError by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -93,6 +97,8 @@ fun SignUpScreen() {
                     .padding(24.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                    // Campo Nome
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
@@ -102,25 +108,52 @@ fun SignUpScreen() {
 
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    // Campo Email com erro
                     OutlinedTextField(
                         value = email,
-                        onValueChange = { email = it },
+                        onValueChange = {
+                            email = it
+                            emailError = false
+                        },
                         label = { Text("Email") },
+                        isError = emailError,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    if (emailError) {
+                        Text(
+                            text = "Email inválido",
+                            color = Color.Red,
+                            style = Typography.bodySmall,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    // Campo Senha Mestre com erro
                     OutlinedTextField(
                         value = masterPassword,
-                        onValueChange = { masterPassword = it },
+                        onValueChange = {
+                            masterPassword = it
+                            senhaError = false
+                        },
                         label = { Text("Senha Mestre") },
+                        isError = senhaError,
                         modifier = Modifier.fillMaxWidth(),
                         visualTransformation = PasswordVisualTransformation()
                     )
+                    if (senhaError) {
+                        Text(
+                            text = "Senha é obrigatória",
+                            color = Color.Red,
+                            style = Typography.bodySmall,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    // Checkbox termos
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
@@ -137,9 +170,15 @@ fun SignUpScreen() {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    // Botão criar conta
                     Button(
                         onClick = {
-                            CriarConta(name, email, masterPassword)
+                            emailError = !isEmailValid(email)
+                            senhaError = masterPassword.isBlank()
+
+                            if (!emailError && !senhaError && termsAccepted) {
+                                CriarConta(name, email, masterPassword)
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = DarkBlue,
@@ -154,7 +193,7 @@ fun SignUpScreen() {
                                 ambientColor = Color.Black.copy(alpha = 0.3f),
                                 spotColor = Color.Black.copy(alpha = 0.3f)
                             ),
-                        enabled = termsAccepted && email.contains("@") && email.contains(".") && masterPassword.isNotBlank()
+                        enabled = termsAccepted
                     ) {
                         Text("Criar conta")
                     }
@@ -162,6 +201,7 @@ fun SignUpScreen() {
             }
         }
 
+        // Diálogo dos termos
         if (showTermsDialog) {
             AlertDialog(
                 onDismissRequest = { showTermsDialog = false },
@@ -184,6 +224,9 @@ fun CriarConta(name: String, email: String, masterPassword: String) {
     auth.createUserWithEmailAndPassword(email, masterPassword)
 }
 
+fun isEmailValid(email: String): Boolean {
+    return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+}
 
 @Preview(showBackground = true)
 @Composable
