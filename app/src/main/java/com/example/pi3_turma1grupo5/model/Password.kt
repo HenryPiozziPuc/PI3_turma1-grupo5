@@ -1,9 +1,9 @@
 package com.example.pi3_turma1grupo5.model
 
-data class PasswordClass( // data class para armazenar todas as informações que serão utilizadas posteriormente
+data class PasswordClass(
     val title:String? = "",
     val login:String? = "",
     val password:String = "",
-    val category:String = "", // será usado posteriormente para separar as senhas por categoria
+    val category:String = "",
     val description:String? = ""
 )
