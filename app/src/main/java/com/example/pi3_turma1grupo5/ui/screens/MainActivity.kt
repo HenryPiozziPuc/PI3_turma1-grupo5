@@ -17,7 +17,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.pi3_turma1grupo5.model.PasswordClass
+import com.example.pi3_turma1grupo5.ui.components.AdicionarSenhaScreen
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
+import com.example.pi3_turma1grupo5.ui.components.MoldeSenha
+import com.example.pi3_turma1grupo5.utils.AddPassowordBD
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +42,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     var mostrarMenu by remember {mutableStateOf(false)} // controlar a visibilidade do menu suspenso
+    var mostrarAddSenha by remember {mutableStateOf(false)}
+
+    val senhas = remember { mutableStateListOf<PasswordClass>() }
 
     Scaffold(
         topBar = {
@@ -61,6 +68,7 @@ fun MainScreen() {
                             text = { Text("Adicionar nova senha")},
                             onClick = {
                                 mostrarMenu = false// fecha o menu depois de escolher a opção
+                                mostrarAddSenha = true
                             }
                         )
                         // 2 opção
@@ -109,6 +117,12 @@ fun MainScreen() {
 
             MoldeCategoria("Teclados de acesso físico")
 
+        }
+
+        if(mostrarAddSenha) {
+            AdicionarSenhaScreen(
+                onBack = {mostrarAddSenha = false}
+            )
         }
     }
 }
