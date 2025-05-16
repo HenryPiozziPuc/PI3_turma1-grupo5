@@ -150,13 +150,14 @@ fun SignUpScreen() {
                         visualTransformation = PasswordVisualTransformation()
                     )
                     if (senhaError.hasError) {
-                        if(senhaError.errorCode == 0)
-                        Text(
-                            text = "Senha é obrigatória",
-                            color = Color.Red,
-                            style = Typography.bodySmall,
-                            modifier = Modifier.align(Alignment.Start)
-                        )
+                        if(senhaError.errorCode == 0) {
+                            Text(
+                                text = "Senha é obrigatória",
+                                color = Color.Red,
+                                style = Typography.bodySmall,
+                                modifier = Modifier.align(Alignment.Start)
+                            )
+                        }
                         if(senhaError.errorCode == 1)
                             Text(
                                 text = "Senha precisa ter 6 caracteres",
@@ -194,11 +195,11 @@ fun SignUpScreen() {
                             }
 
                             if (!emailError && !senhaError.hasError && termsAccepted) {
-                                CriarConta(context, name, email, masterPassword)
+                                CriarConta(context, name, email, masterPassword) {
+                                    val intent = Intent(context, MainActivity::class.java)
+                                    context.startActivity(intent)
+                                }
                             }
-
-                            val intent = Intent(context, MainActivity::class.java)
-                            context.startActivity(intent)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = DarkBlue,
@@ -242,7 +243,8 @@ fun CriarConta(
     context: Context,
     name: String,
     email: String,
-    masterPassword: String
+    masterPassword: String,
+    onSuccess: () -> Unit
 ) {
     val auth = Firebase.auth
     val firestore = FirebaseFirestore.getInstance()
@@ -272,6 +274,8 @@ fun CriarConta(
                                 .set(hashMapOf("placeholder" to true))
 
                             Toast.makeText(context, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show()
+
+                            onSuccess()
                         }
                         .addOnFailureListener {
                             Toast.makeText(context, "Erro ao salvar dados no Firestore", Toast.LENGTH_SHORT).show()
