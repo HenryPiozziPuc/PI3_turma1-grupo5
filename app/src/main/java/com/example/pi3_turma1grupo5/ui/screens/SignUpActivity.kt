@@ -268,10 +268,13 @@ fun CriarConta(
                     firestore.collection("usuarios").document(uid)
                         .set(userDoc)
                         .addOnSuccessListener {
-                            firestore.collection("usuarios").document(uid)
-                                .collection("senhas")
-                                .document("placeholder")
-                                .set(hashMapOf("placeholder" to true))
+                            val senhasCollection = firestore.collection("usuarios").document(uid).collection("categorias")
+
+                            val categoriasIniciais = listOf("Sites Web", "Aplicativos", "Teclados de Acesso Físico")
+
+                            for (categoria in categoriasIniciais) {
+                                senhasCollection.document(categoria).set(hashMapOf("criadoEm" to System.currentTimeMillis()))
+                            }
 
                             Toast.makeText(context, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show()
 
