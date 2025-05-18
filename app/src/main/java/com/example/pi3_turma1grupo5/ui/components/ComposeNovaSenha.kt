@@ -1,5 +1,6 @@
 package com.example.pi3_turma1grupo5.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,10 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -62,15 +67,17 @@ import com.google.firebase.auth.auth
         val listacategorias = remember { mutableStateListOf<String>()}
 
         // busca as categorias quando a tela é aberta
-        LaunchedEffect(uid){
-            if(!uid.isNullOrEmpty()){
-                buscarCategorias(uid) {categorias ->
-                    listacategorias.clear()
-                    listacategorias.addAll(categorias)
-                }
+        LaunchedEffect(uid) {
+            if (!uid.isNullOrEmpty()) {
+                buscarCategorias(
+                    uid = uid,
+                    onSuccess = { categorias ->
+                        listacategorias.clear()
+                        listacategorias.addAll(categorias)
+                    },
+                )
             }
         }
-
 
         Box( // fundo que controla os toques fora do formulário
             modifier = Modifier
@@ -137,33 +144,42 @@ import com.google.firebase.auth.auth
                         colors = TextFieldDefaults.colors(),
                         maxLines = 2
                     )
-                    OutlinedTextField( // serve como o botão para abrir o menu
-                        value = categoriaSelecionada,
-                        onValueChange = {},
-                        label = {Text("Categoria")},
-                        modifier = Modifier
-                            .clickable{ mostrarMenu = true}
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        readOnly = true,
-                        colors = TextFieldDefaults.colors(),
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = mostrarMenu)
-                        }
-                    )
 
-                    DropdownMenu(
+                    // ExposedDropdownMenuBox: componente que já vem com padrões e comportamentos do material design (padrão usado em formulários)
+
+                    ExposedDropdownMenuBox( // container principal (gerencia o estado e coordena os componentes filhos)
                         expanded = mostrarMenu,
-                        onDismissRequest = {mostrarMenu = false}
+                        onExpandedChange = { mostrarMenu = !mostrarMenu },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        listacategorias.forEach { categoria ->
-                            DropdownMenuItem(
-                                text = {Text(categoria)},
-                                onClick = {
-                                    categoriaSelecionada = categoria
-                                    mostrarMenu = false
+                        OutlinedTextField(
+                            value = categoriaSelecionada,
+                            onValueChange = {},
+                            label = { Text("Categoria") },
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = mostrarMenu)
+                            },
+                            colors = TextFieldDefaults.colors(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                                .menuAnchor() //serve para "juntar" o campo de texto ao menu suspenso -> padronização
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = mostrarMenu,
+                            onDismissRequest = { mostrarMenu = false }
+                        ) {
+                                listacategorias.forEach { categoria ->
+                                    DropdownMenuItem(
+                                        text = { Text(categoria) },
+                                        onClick = {
+                                            categoriaSelecionada = categoria
+                                            mostrarMenu = false
+                                        }
+                                    )
                                 }
-                            )
                         }
                     }
 

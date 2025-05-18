@@ -5,21 +5,22 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 fun buscarCategorias(
-    userId: String, callback: (List<String>) -> Unit){
-    Firebase.firestore.collection("categorias")
-        .whereEqualTo("uid", userId)
+    uid: String,
+    onSuccess: (List<String>) -> Unit,
+){
+    Firebase.firestore.collection("usuarios")
+        .document(uid)
+        .collection("categorias")
         .get()
         .addOnSuccessListener { resultado ->
             val categoriasExistentes = mutableListOf<String>()
 
             for (documento in resultado.documents){
-                val nomeCategoria = documento.id
-                categoriasExistentes.add(nomeCategoria)
+                categoriasExistentes.add(documento.id)
             }
-            callback(categoriasExistentes.distinct()) // remove categorias com o mesmo nome
+            onSuccess(categoriasExistentes.distinct()) // remove categorias com o mesmo nome
         }
         .addOnFailureListener { erro ->
             Log.e("Firebase", "Erro ao buscar categorias", erro)
-            callback(emptyList())
         }
     }
