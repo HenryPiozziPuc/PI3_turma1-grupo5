@@ -5,6 +5,9 @@
     <string name="title_activity_qrcode_scanner">QRCodeScannerActivity</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_password_recovry">PasswordRecovryActivity</string>
-    <string name="title_activity_sing_up">SingUpActivity</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_on_board">OnBoardActivity</string>
+    <string name="onBoard1">Bem vindo ao Super ID! Nesse app você será capaz de ser dono de suas proprias senhas, podendo armazenar e visualizar quando quiser!</string>
+    <string name="onBoard2">Explicando um pouco como isso funciona, você cadastra suas senhas por categorias que você mesmo pode fazer como Sites web, teclados numericos ou qualquer outro que te agrade!</string>
+    <string name="onBoard3">E pode ficar tranquilo, que todas suas senhas são criptografadas, ninguem poderá ter acesso à elas, apenas você, pronto para utilizar?</string>
 </resources>
