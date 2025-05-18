@@ -1,11 +1,7 @@
 package com.example.pi3_turma1grupo5.ui.components
 
-import android.R
-import android.os.Bundle
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,52 +11,67 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.BottomSheetDefaults.ContainerColor
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.example.pi3_turma1grupo5.model.PasswordClass
-import com.example.pi3_turma1grupo5.ui.theme.BackgroundLight
+import com.example.pi3_turma1grupo5.model.ClasseSenha
 import com.example.pi3_turma1grupo5.ui.theme.Blue
 import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
-import com.example.pi3_turma1grupo5.utils.AddPassowordBD
+import com.example.pi3_turma1grupo5.utils.AddPasswordBD
+import com.example.pi3_turma1grupo5.utils.buscarCategorias
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 
-    @OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun AdicionarSenhaScreen(
         onBack: () -> Unit,
-        objSenha: PasswordClass = PasswordClass()
+        objSenha: ClasseSenha = ClasseSenha()
     ) {
+        val auth = Firebase.auth
+        val user = auth.currentUser
+        val uid = user?.uid
+
         var estadoSenha by remember { mutableStateOf(objSenha) }
+        var mostrarMenu by remember {mutableStateOf(false)} // controla a visibilidade do menu suspenso
+        var categoriaSelecionada by remember { mutableStateOf("") }
+        val listacategorias = remember { mutableStateListOf<String>()}
+
+        // busca as categorias quando a tela é aberta
+        LaunchedEffect(uid){
+            if(!uid.isNullOrEmpty()){
+                buscarCategorias(uid) {categorias ->
+                    listacategorias.clear()
+                    listacategorias.addAll(categorias)
+                }
+            }
+        }
+
+
         Box( // fundo que controla os toques fora do formulário
             modifier = Modifier
                 .fillMaxSize()
@@ -90,8 +101,8 @@ import com.example.pi3_turma1grupo5.utils.AddPassowordBD
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     OutlinedTextField(
-                        value = estadoSenha.title ?: "",
-                        onValueChange = { estadoSenha = estadoSenha.copy(title = it) },
+                        value = estadoSenha.titulo ?: "",
+                        onValueChange = { estadoSenha = estadoSenha.copy(titulo = it) },
                         label = { Text("Título") },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -108,8 +119,8 @@ import com.example.pi3_turma1grupo5.utils.AddPassowordBD
                         colors = TextFieldDefaults.colors()
                     )
                     OutlinedTextField(
-                        value = estadoSenha.password ?: "",
-                        onValueChange = { estadoSenha = estadoSenha.copy(password = it) },
+                        value = estadoSenha.senha ?: "",
+                        onValueChange = { estadoSenha = estadoSenha.copy(senha = it) },
                         label = { Text("Senha") },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -117,8 +128,8 @@ import com.example.pi3_turma1grupo5.utils.AddPassowordBD
                         colors = TextFieldDefaults.colors()
                     )
                     OutlinedTextField(
-                        value = estadoSenha.description ?: "",
-                        onValueChange = { estadoSenha = estadoSenha.copy(description = it) },
+                        value = estadoSenha.descricao ?: "",
+                        onValueChange = { estadoSenha = estadoSenha.copy(descricao = it) },
                         label = { Text("Descrição") },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -126,11 +137,43 @@ import com.example.pi3_turma1grupo5.utils.AddPassowordBD
                         colors = TextFieldDefaults.colors(),
                         maxLines = 2
                     )
+                    OutlinedTextField( // serve como o botão para abrir o menu
+                        value = categoriaSelecionada,
+                        onValueChange = {},
+                        label = {Text("Categoria")},
+                        modifier = Modifier
+                            .clickable{ mostrarMenu = true}
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        readOnly = true,
+                        colors = TextFieldDefaults.colors(),
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = mostrarMenu)
+                        }
+                    )
+
+                    DropdownMenu(
+                        expanded = mostrarMenu,
+                        onDismissRequest = {mostrarMenu = false}
+                    ) {
+                        listacategorias.forEach { categoria ->
+                            DropdownMenuItem(
+                                text = {Text(categoria)},
+                                onClick = {
+                                    categoriaSelecionada = categoria
+                                    mostrarMenu = false
+                                }
+                            )
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-                            AddPassowordBD(
-                                password = estadoSenha,) },
+                            AddPasswordBD(
+                                password = estadoSenha.copy(
+                                    categoria = categoriaSelecionada // adiciona o campo "categoria" do objeto
+                                ),) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp),
@@ -155,6 +198,6 @@ import com.example.pi3_turma1grupo5.utils.AddPassowordBD
 @Composable
 fun AddSenhaPreview(){
     PI3_turma1grupo5Theme{
-        AdicionarSenhaScreen(onBack = {},  objSenha = PasswordClass())
+        AdicionarSenhaScreen(onBack = {},  objSenha = ClasseSenha())
     }
 }

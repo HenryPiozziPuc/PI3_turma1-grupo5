@@ -1,13 +1,13 @@
 package com.example.pi3_turma1grupo5.utils
 
 import android.util.Log
-import com.example.pi3_turma1grupo5.model.PasswordClass
+import com.example.pi3_turma1grupo5.model.ClasseSenha
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 
-fun AddPassowordBD(
-    password: PasswordClass
+fun AddPasswordBD(
+    password: ClasseSenha
 ){
     val auth = Firebase.auth
     val firestore = FirebaseFirestore.getInstance()
@@ -16,11 +16,11 @@ fun AddPassowordBD(
 
     if (!uid.isNullOrEmpty()) {
         val objSenha = hashMapOf(
-            "title" to password.title,
+            "title" to password.titulo,
             "login" to password.login,
             "password" to password, // FAZER A CRIPTOGRAFIA ANTES DO HASHMAP!!!
-            "category" to password.category, // VERIFICAR QUE ELE SÓ PODE MANDAR CATEGORIAS JÁ EXISTENTES
-            "description" to password.description
+            "category" to password.categoria,
+            "description" to password.descricao
         )
 
         firestore.collection("usuarios")

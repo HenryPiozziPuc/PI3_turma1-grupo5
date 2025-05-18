@@ -11,12 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.pi3_turma1grupo5.model.PasswordClass
+import com.example.pi3_turma1grupo5.model.ClasseSenha
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 
 @Composable
 fun MoldeSenha(
-    password: PasswordClass, // recebe o tipo passwordClass como parâmetro
+    password: ClasseSenha, // recebe o tipo passwordClass como parâmetro
 ) {
     Card(
         modifier = Modifier
@@ -31,9 +31,9 @@ fun MoldeSenha(
             modifier = Modifier.padding(16.dp)
         ) {
 
-            if(!password.title.isNullOrBlank()) { // exibe apenas se a string não for nula, vazia ou espaços em branco
+            if(!password.titulo.isNullOrBlank()) { // exibe apenas se a string não for nula, vazia ou espaços em branco
                 Text(
-                    text = password.title, // Campo do Título
+                    text = password.titulo, // Campo do Título
                     style = MaterialTheme.typography.titleLarge
                 )
             }
@@ -47,14 +47,14 @@ fun MoldeSenha(
             }
 
             Text(
-                text = password.password,
+                text = password.senha,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(top = 4.dp)
             )
 
-            if(!password.description.isNullOrBlank()){
+            if(!password.descricao.isNullOrBlank()){
                 Text(
-                    text = password.description,
+                    text = password.descricao,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 ) }
@@ -68,12 +68,12 @@ fun MoldeSenha(
 fun MoldeSenhaPreview() {
     PI3_turma1grupo5Theme {
         MoldeSenha(
-            password = PasswordClass(
-                title = "Gov Br",
+            password = ClasseSenha(
+                titulo = "Gov Br",
                 login = "bruno@bruno.com",
-                password = "24#qwe",
-                category = "Sites Web",
-                description = "IR"
+                senha = "24#qwe",
+                categoria = "Sites Web",
+                descricao = "IR"
             )
         )
     }
