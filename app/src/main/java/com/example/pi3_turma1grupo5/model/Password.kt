@@ -4,6 +4,6 @@ data class ClasseSenha(
     val titulo:String? = "",
     val login:String? = "",
     val senha:String = "",
-    val categoria:String = "",
-    val descricao:String? = ""
+    val descricao:String? = "",
+    val categoria:String = ""
 )

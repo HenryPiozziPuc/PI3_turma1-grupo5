@@ -31,20 +31,20 @@ fun MoldeSenha(
             modifier = Modifier.padding(16.dp)
         ) {
 
-            if(!password.titulo.isNullOrBlank()) { // exibe apenas se a string não for nula, vazia ou espaços em branco
-                Text(
-                    text = password.titulo, // Campo do Título
+
+            Text(
+                    text = password.titulo ?: "",
                     style = MaterialTheme.typography.titleLarge
                 )
-            }
 
-            if(!password.login.isNullOrBlank()){
-                Text(
-                    text = password.login,
+
+
+            Text(
+                    text = password.login ?: "",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 8.dp)
                 )
-            }
+
 
             Text(
                 text = password.senha,
@@ -52,12 +52,18 @@ fun MoldeSenha(
                 modifier = Modifier.padding(top = 4.dp)
             )
 
-            if(!password.descricao.isNullOrBlank()){
-                Text(
-                    text = password.descricao,
+
+            Text(
+                    text = password.descricao ?: "",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
-                ) }
+                )
+
+            Text(
+                text = password.categoria,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
     }
 }

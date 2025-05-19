@@ -1,13 +1,17 @@
 package com.example.pi3_turma1grupo5.utils
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.example.pi3_turma1grupo5.model.ClasseSenha
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 fun AddPasswordBD(
-    password: ClasseSenha
+    password: ClasseSenha,
+    context: Context
 ){
     val auth = Firebase.auth
     val firestore = FirebaseFirestore.getInstance()
@@ -18,23 +22,23 @@ fun AddPasswordBD(
         val objSenha = hashMapOf(
             "title" to password.titulo,
             "login" to password.login,
-            "password" to password, // FAZER A CRIPTOGRAFIA ANTES DO HASHMAP!!!
+            "password" to password.senha,
             "category" to password.categoria,
             "description" to password.descricao
         )
 
         firestore.collection("usuarios")
             .document(uid)
-            .collection("senhas")
-            .document()
-            .set(objSenha)
+            .collection("categorias")
+            .document(password.categoria)
+            .update("senhas", FieldValue.arrayUnion(objSenha))
             .addOnSuccessListener {
-                Log.d("Firestore", "Senha salva com sucesso!")
+                Toast.makeText(context, "Senha salva com sucesso!", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
-                Log.e("Firestore", "Erro ao salvar senha", e)
+                Toast.makeText(context, "Erro ao salvar senha!", Toast.LENGTH_SHORT).show()
             }
         } else {
-            Log.e("Auth","UID inválido ou usuário não logado ")
+            Toast.makeText(context, "UID inválido/usuário não logado", Toast.LENGTH_SHORT).show()
     }
 }
