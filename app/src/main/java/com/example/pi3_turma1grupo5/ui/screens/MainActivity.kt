@@ -1,5 +1,6 @@
 package com.example.pi3_turma1grupo5.ui.screens
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,7 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
@@ -38,6 +39,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     var mostrarMenu by remember {mutableStateOf(false)} // controlar a visibilidade do menu suspenso
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -82,7 +84,10 @@ fun MainScreen() {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* QR Code */ },
+                onClick = {
+                    val intent = Intent(context, QRCodeScannerActivity::class.java)
+                    context.startActivity(intent)
+                },
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 60.dp)
             ){

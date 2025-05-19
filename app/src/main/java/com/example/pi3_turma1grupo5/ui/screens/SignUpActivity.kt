@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pi3_turma1grupo5.ui.theme.BackgroundLight
 import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
+import com.example.pi3_turma1grupo5.ui.theme.LightBlue
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.example.pi3_turma1grupo5.ui.theme.Typography
 import com.google.firebase.Firebase
@@ -46,6 +46,10 @@ import androidx.compose.ui.platform.LocalContext
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.res.painterResource
+import com.example.pi3_turma1grupo5.R
 import com.google.firebase.firestore.FirebaseFirestore
 
 data class SenhaError(var hasError: Boolean, val errorCode: Int)
@@ -86,19 +90,29 @@ fun SignUpScreen() {
                 .padding(top = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Super ID",
-                style = Typography.displayMedium,
-                color = DarkBlue
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Image(
+                    painter = painterResource(id = R.drawable.superid),
+                    contentDescription = "Logo do SuperId",
+                    modifier = Modifier
+                        .size(75.dp)
+                )
+                Text(
+                    text = "Super ID",
+                    style = Typography.displayMedium,
+                    color = DarkBlue
+                )
+            }
+
 
             Spacer(modifier = Modifier.height(80.dp))
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.85f)
-                    .background(Color.White, shape = RoundedCornerShape(16.dp))
-                    .border(2.dp, DarkBlue, RoundedCornerShape(16.dp))
+                    .background(LightBlue, shape = RoundedCornerShape(16.dp))
                     .padding(24.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
