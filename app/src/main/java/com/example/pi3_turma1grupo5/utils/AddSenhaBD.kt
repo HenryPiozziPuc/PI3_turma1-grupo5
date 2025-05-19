@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.example.pi3_turma1grupo5.model.ClasseSenha
+import com.example.pi3_turma1grupo5.crypto.PasswordCrypto
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
@@ -19,10 +20,14 @@ fun AddPasswordBD(
     val uid = user?.uid
 
     if (!uid.isNullOrEmpty()) {
+
+        val (senhaCriptografada, ivBase64) = PasswordCrypto.encryptPasswordGCM(password.senha)
+
         val objSenha = hashMapOf(
             "title" to password.titulo,
             "login" to password.login,
-            "password" to password.senha,
+            "password" to senhaCriptografada,
+            "iv" to ivBase64,
             "category" to password.categoria,
             "description" to password.descricao
         )

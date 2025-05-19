@@ -40,9 +40,6 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     var mostrarMenu by remember {mutableStateOf(false)} // controlar a visibilidade do menu suspenso
     var mostrarAddSenha by remember {mutableStateOf(false)}
-
-    val senhas = remember { mutableStateListOf<ClasseSenha>() }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -65,7 +62,7 @@ fun MainScreen() {
                             text = { Text("Adicionar nova senha")},
                             onClick = {
                                 mostrarMenu = false// fecha o menu depois de escolher a opção
-                                mostrarAddSenha = true
+                                mostrarAddSenha = true // indica que o compose de nova senha foi acionado
                             }
                         )
                         // 2 opção
