@@ -29,13 +29,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import androidx.camera.core.ExperimentalGetImage
-
+import androidx.compose.material3.AlertDialog
 
 
 class QRCodeScannerActivity : ComponentActivity() {
@@ -53,7 +52,6 @@ class QRCodeScannerActivity : ComponentActivity() {
 @Composable
 fun QRCodeScannerScreen() {
     val context = LocalContext.current
-    //val lifecycleOwner = LocalLifecycleOwner.current
 
     var hasCameraPermission by remember {
         mutableStateOf(
@@ -76,6 +74,10 @@ fun QRCodeScannerScreen() {
         }
     }
 
+    var scannedValue by remember { mutableStateOf<String?>(null) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -88,11 +90,14 @@ fun QRCodeScannerScreen() {
                     .align(Alignment.Center)
                     .background(Blue)
             ) {
-                CameraPreview { scannedValue ->
-                    Log.d("QRCode", "Valor lido: $scannedValue")
-                    // Aqui você pode navegar, exibir um diálogo ou salvar o valor
+                CameraPreview { qrValue ->
+                    scannedValue = qrValue
+                    if (isQRCodeValid(qrValue)) {
+                        showSuccessDialog = true
+                    } else {
+                        showErrorDialog = true
+                    }
                 }
-
             }
         } else {
             Text(
@@ -101,8 +106,33 @@ fun QRCodeScannerScreen() {
                 color = Color.White
             )
         }
+
+        // Diálogo de sucesso
+        if (showSuccessDialog) {
+            AlertDialog(
+                onDismissRequest = { showSuccessDialog = false },
+                title = { Text("QR Code Válido") },
+                text = { Text("Conteúdo: ${scannedValue ?: ""}") },
+                confirmButton = {
+                    Text("OK", modifier = Modifier.padding(8.dp))
+                }
+            )
+        }
+
+        // Diálogo de erro
+        if (showErrorDialog) {
+            AlertDialog(
+                onDismissRequest = { showErrorDialog = false },
+                title = { Text("QR Code Inválido") },
+                text = { Text("Esse código não é reconhecido.") },
+                confirmButton = {
+                    Text("OK", modifier = Modifier.padding(8.dp))
+                }
+            )
+        }
     }
 }
+
 
 @Composable
 fun CameraPreview(
@@ -184,4 +214,8 @@ class QRCodeAnalyzer(
                 imageProxy.close()
             }
     }
+}
+
+fun isQRCodeValid(qrValue: String): Boolean {
+    return qrValue.startsWith("https:")
 }
