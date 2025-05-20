@@ -26,7 +26,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -56,11 +55,7 @@ fun WelcomeScreen() {
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .background(
-            brush = Brush.verticalGradient(
-                colorStops = BackgroundLight
-            )
-        )
+        .background(BackgroundLight)
     ) {
         Canvas(
             modifier = Modifier

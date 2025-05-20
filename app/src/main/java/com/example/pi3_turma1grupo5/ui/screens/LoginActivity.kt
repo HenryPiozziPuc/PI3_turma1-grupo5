@@ -13,7 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview // <-- IMPORTANTE pra funcionar o Preview!
 import android.util.Log
+import com.example.pi3_turma1grupo5.ui.theme.BackgroundLight
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -88,12 +88,7 @@ fun LoginScreen(onLoginAttempt: (String, String) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFdbe3f5),
-                        Color(0xFF9cb2e5)
-                    )
-                )
+                BackgroundLight
             )
     ) {
         Column(

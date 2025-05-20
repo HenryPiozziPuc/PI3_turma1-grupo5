@@ -6,10 +6,27 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -133,7 +150,7 @@ fun SignUpScreen() {
                         visualTransformation = PasswordVisualTransformation()
                     )
                     if (senhaError.hasError) {
-                        if (senhaError.errorCode == 0) {
+                        if(senhaError.errorCode == 0) {
                             Text(
                                 text = "Senha é obrigatória",
                                 color = Color.Red,
@@ -141,14 +158,13 @@ fun SignUpScreen() {
                                 modifier = Modifier.align(Alignment.Start)
                             )
                         }
-                        if (senhaError.errorCode == 1) {
+                        if(senhaError.errorCode == 1)
                             Text(
                                 text = "Senha precisa ter 6 caracteres",
                                 color = Color.Red,
                                 style = Typography.bodySmall,
                                 modifier = Modifier.align(Alignment.Start)
                             )
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -172,9 +188,9 @@ fun SignUpScreen() {
                     Button(
                         onClick = {
                             emailError = !isEmailValid(email)
-                            if (!masterPassword.isNotBlank()) {
+                            if(!masterPassword.isNotBlank()){
                                 senhaError = SenhaError(true, 0)
-                            } else if (masterPassword.length < 6) {
+                            }else if(masterPassword.length < 6) {
                                 senhaError = SenhaError(true, 1)
                             }
 
@@ -232,6 +248,7 @@ fun CriarConta(
 ) {
     val auth = Firebase.auth
     val firestore = FirebaseFirestore.getInstance()
+
     val deviceId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
 
     auth.createUserWithEmailAndPassword(email, masterPassword)
@@ -251,35 +268,17 @@ fun CriarConta(
                     firestore.collection("usuarios").document(uid)
                         .set(userDoc)
                         .addOnSuccessListener {
-                            val senhasCollection = firestore.collection("usuarios").document(uid)
-                                .collection("categorias")
+                            firestore.collection("usuarios").document(uid)
+                                .collection("senhas")
+                                .document("placeholder")
+                                .set(hashMapOf("placeholder" to true))
 
-                            val categoriasIniciais = listOf(
-                                "Sites Web",
-                                "Aplicativos",
-                                "Teclados de Acesso Físico"
-                            )
+                            Toast.makeText(context, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show()
 
-                            for (categoria in categoriasIniciais) {
-                                senhasCollection.document(categoria)
-                                    .set(hashMapOf("criadoEm" to System.currentTimeMillis()))
-                            }
-                            user.sendEmailVerification()
-                                .addOnCompleteListener {
-                                    Toast.makeText(
-                                        context,
-                                        "Conta criada com sucesso! Verifique seu email.",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                    onSuccess()
-                                }
+                            onSuccess()
                         }
                         .addOnFailureListener {
-                            Toast.makeText(
-                                context,
-                                "Erro ao salvar dados no Firestore",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(context, "Erro ao salvar dados no Firestore", Toast.LENGTH_SHORT).show()
                         }
                 }
             } else {

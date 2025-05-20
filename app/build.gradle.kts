@@ -60,12 +60,21 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
-    implementation("com.google.firebase:firebase-firestore-ktx:25.1.3")
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
     // analytics
     implementation("com.google.firebase:firebase-analytics")
     // authentication
     implementation("com.google.firebase:firebase-auth-ktx:23.2.0")
 
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
+
+    // CameraX
+    implementation("androidx.camera:camera-camera2:1.4.2")
+    implementation("androidx.camera:camera-core:1.4.2")
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+    implementation("androidx.camera:camera-view:1.4.2")
+
+    // ML Kit Barcode Scanner
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
 }
