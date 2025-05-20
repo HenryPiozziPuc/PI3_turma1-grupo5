@@ -272,10 +272,26 @@ fun CriarConta(
                                 .collection("senhas")
                                 .document("placeholder")
                                 .set(hashMapOf("placeholder" to true))
+                            user.sendEmailVerification()
+                                .addOnCompleteListener { emailTask ->
+                                    if (emailTask.isSuccessful) {
+                                        Toast.makeText(
+                                            context,
+                                            "Conta criada com sucesso! Verifique seu email para ativar a conta.",
+                                            Toast.LENGTH_LONG
+                                        ).show()
 
-                            Toast.makeText(context, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show()
+                                        onSuccess()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Conta criada, mas falha ao enviar email de verificação.",
+                                            Toast.LENGTH_LONG
+                                        ).show()
 
-                            onSuccess()
+                                        onSuccess()
+                                    }
+                                }
                         }
                         .addOnFailureListener {
                             Toast.makeText(context, "Erro ao salvar dados no Firestore", Toast.LENGTH_SHORT).show()
