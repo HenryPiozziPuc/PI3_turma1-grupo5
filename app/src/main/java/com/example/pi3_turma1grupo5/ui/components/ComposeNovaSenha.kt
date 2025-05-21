@@ -60,7 +60,8 @@ import com.google.firebase.auth.auth
     @Composable
     fun AdicionarSenhaScreen(
         onBack: () -> Unit,
-        objSenha: ClasseSenha = ClasseSenha()
+        objSenha: ClasseSenha = ClasseSenha(),
+        onSenhaAdicionada: (ClasseSenha) -> Unit
     ) {
         val auth = Firebase.auth
         val user = auth.currentUser
@@ -202,7 +203,12 @@ import com.google.firebase.auth.auth
                             AddPasswordBD(
                                 password = estadoSenha.copy(
                                     categoria = categoriaSelecionada // adiciona o campo "categoria" do objeto
-                                ), context = context
+                                ),
+                                context = context,
+                                onSenhaAdicionada = {senhaSalva ->
+                                    onSenhaAdicionada(senhaSalva)
+                                    onBack()
+                                }
                             ) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -228,6 +234,6 @@ import com.google.firebase.auth.auth
 @Composable
 fun AddSenhaPreview(){
     PI3_turma1grupo5Theme{
-        AdicionarSenhaScreen(onBack = {},  objSenha = ClasseSenha())
+        AdicionarSenhaScreen(onBack = {},  objSenha = ClasseSenha(), onSenhaAdicionada = {})
     }
 }
