@@ -47,6 +47,11 @@ import androidx.compose.ui.platform.LocalContext
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.res.stringResource
+import com.example.pi3_turma1grupo5.R
 import com.google.firebase.firestore.FirebaseFirestore
 
 data class SenhaError(var hasError: Boolean, val errorCode: Int)
@@ -79,11 +84,7 @@ fun SignUpScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colorStops = BackgroundLight
-                )
-            )
+            .background(BackgroundLight)
     ) {
         Column(
             modifier = Modifier
@@ -179,7 +180,7 @@ fun SignUpScreen() {
                         )
                         Text(text = "Eu aceito os ")
                         TextButton(onClick = { showTermsDialog = true }) {
-                            Text("termos e condições")
+                            Text("Termos de uso")
                         }
                     }
 
@@ -202,8 +203,8 @@ fun SignUpScreen() {
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = DarkBlue,
-                            contentColor = Color.White
+                            containerColor = if (termsAccepted) DarkBlue else Color.White,
+                            contentColor = if (termsAccepted) Color.White else Color.Gray
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -213,11 +214,11 @@ fun SignUpScreen() {
                                 shape = RoundedCornerShape(12.dp),
                                 ambientColor = Color.Black.copy(alpha = 0.3f),
                                 spotColor = Color.Black.copy(alpha = 0.3f)
-                            ),
-                        enabled = termsAccepted
+                            )
                     ) {
                         Text("Criar conta")
                     }
+
                 }
             }
         }
@@ -227,7 +228,13 @@ fun SignUpScreen() {
                 onDismissRequest = { showTermsDialog = false },
                 title = { Text("Termos e Condições") },
                 text = {
-                    Text("Colocar termos e condições depois")
+                    Box(
+                        modifier = Modifier
+                            .heightIn(min = 100.dp, max = 400.dp) // limite para permitir rolagem
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        Text(stringResource(R.string.termos_condicoes))
+                    }
                 },
                 confirmButton = {
                     TextButton(onClick = { showTermsDialog = false }) {

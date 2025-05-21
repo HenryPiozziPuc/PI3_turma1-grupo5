@@ -83,7 +83,7 @@ fun WelcomeScreen() {
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 170.dp),
+                .padding(bottom = 130.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -113,22 +113,21 @@ fun WelcomeScreen() {
 
             Button(
                 onClick = {
-                    val intent = Intent(context, LoginActivity::class.java)
+                    val intent = Intent(context, SignUpActivity::class.java)
                     context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DarkBlue,
                     contentColor = Color.White
                 ),
-
                 modifier = Modifier
                     .fillMaxWidth(0.6f)
                     .height(50.dp)
                     .shadow(
-                        elevation = 8.dp,
-                        shape = RoundedCornerShape(12.dp),
+                        elevation = 1.dp,
+                        shape = RoundedCornerShape(20.dp),
                         ambientColor = Color.Black.copy(alpha = 0.3f),
-                        spotColor = Color.Black.copy(alpha = 0.3f)
+                        spotColor = Color.Black.copy(alpha = 0.9f)
                     )
             ) {
                 Text(text = "Login")
@@ -155,7 +154,7 @@ fun WelcomeScreen() {
                         spotColor = Color.Black.copy(alpha = 0.9f)
                     )
             ) {
-                Text(text = "Cadastrar")
+                Text(text = "Cadastro")
             }
         }
     }
