@@ -12,7 +12,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 fun AddPasswordBD(
     password: ClasseSenha,
-    context: Context
+    context: Context,
+    onSenhaAdicionada: (ClasseSenha) -> Unit = {},
+    onBack: () -> Unit = {}
 ){
     val auth = Firebase.auth
     val firestore = FirebaseFirestore.getInstance()
@@ -39,6 +41,9 @@ fun AddPasswordBD(
             .update("senhas", FieldValue.arrayUnion(objSenha))
             .addOnSuccessListener {
                 Toast.makeText(context, "Senha salva com sucesso!", Toast.LENGTH_SHORT).show()
+
+                onSenhaAdicionada(password)
+                onBack()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(context, "Erro ao salvar senha!", Toast.LENGTH_SHORT).show()
