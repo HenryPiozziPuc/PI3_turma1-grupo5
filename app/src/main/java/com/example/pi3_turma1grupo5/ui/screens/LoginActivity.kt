@@ -38,13 +38,6 @@ class LoginActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        // verifica se existe um usuário logado (deve ser colocado aqui, antes de mostrar a UI do login)
-        if(auth.currentUser != null){
-            startActivity(Intent(this, MainActivity::class.java)) // função que inicia e redireciona para a tela main
-            finish() // encerra a LoginActivity
-
-        }
         setContent {
             PI3_turma1grupo5Theme {
                 LoginScreen(onLoginAttempt = { email, password ->

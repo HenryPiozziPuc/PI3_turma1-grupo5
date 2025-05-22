@@ -12,10 +12,8 @@ class LauncherActivity : ComponentActivity() {
         val user = FirebaseAuth.getInstance().currentUser
 
         if (user != null) {
-            // Usuário está logado -> vá para MainActivity
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
         } else {
-            // Usuário não está logado -> vá para OnBoardActivity
             startActivity(Intent(this, OnBoardActivity::class.java))
         }
 
