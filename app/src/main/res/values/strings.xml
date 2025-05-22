@@ -212,4 +212,5 @@
 
         Os eventuais litígios deverão ser apresentados no foro da comarca em que se encontra a sede da empresa.
     </string>
+    <string name="title_activity_password_recovery">PasswordRecoveryActivity</string>
 </resources>

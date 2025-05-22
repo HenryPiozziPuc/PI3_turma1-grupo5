@@ -113,7 +113,7 @@ fun WelcomeScreen() {
 
             Button(
                 onClick = {
-                    val intent = Intent(context, SignUpActivity::class.java)
+                    val intent = Intent(context, LoginActivity::class.java)
                     context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(
