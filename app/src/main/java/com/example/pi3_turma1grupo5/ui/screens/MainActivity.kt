@@ -7,9 +7,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -20,7 +24,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pi3_turma1grupo5.model.ClasseSenha
 import com.example.pi3_turma1grupo5.ui.components.AdicionarSenhaScreen
+import com.example.pi3_turma1grupo5.ui.components.MoldeSenha
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
+import com.example.pi3_turma1grupo5.utils.BuscarSenhas
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,9 +48,39 @@ class MainActivity : ComponentActivity() {
                                         */
 @Composable
 fun MainScreen() {
+    val context = LocalContext.current
+    val auth = Firebase.auth
+    val user = auth.currentUser
+    val uid = user?.uid
+
     var mostrarMenu by remember {mutableStateOf(false)} // controlar a visibilidade do menu suspenso
     var mostrarAddSenha by remember {mutableStateOf(false)}
-    val context = LocalContext.current
+
+    val listaSenhas = remember { mutableStateListOf<ClasseSenha>() } // lista definitiva (lista observável)
+
+    if(Firebase.auth.currentUser == null){
+        Text("Usuário não logado")
+        return
+    }
+
+
+    // busca as senhas quando a tela é aberta
+    //LahchedEffect: é executado quando o componente inicia
+    LaunchedEffect(Unit){
+        Firebase.auth.currentUser?.uid?.let {uid ->
+            if (!uid.isNullOrEmpty()) {
+                BuscarSenhas(
+                    uid = uid,
+                    onSuccess = { senhas ->
+                        listaSenhas.clear()
+                        listaSenhas.addAll(senhas)
+                    }
+                )
+            }
+        }
+    }
+
+
 
     Scaffold(
         topBar = {
@@ -103,6 +141,7 @@ fun MainScreen() {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState()) // permite a rolagem da tela
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ){
@@ -112,24 +151,38 @@ fun MainScreen() {
                 style = MaterialTheme.typography.headlineSmall //small para as seções
             )
 
-            MoldeCategoria("Sites Web")
+            MoldeCategoria(
+                titulo = "Sites Web",
+                listaSenhas = listaSenhas)
 
-            MoldeCategoria("Aplicativos")
+            MoldeCategoria(
+                titulo = "Aplicativos",
+                listaSenhas = listaSenhas)
 
-            MoldeCategoria("Teclados de acesso físico")
+            MoldeCategoria(
+                titulo = "Teclados de acesso físico",
+                listaSenhas = listaSenhas)
 
         }
 
+        // abre o compose da nova senha e cria o callback "onSenhaAdicionada"
         if(mostrarAddSenha) {
             AdicionarSenhaScreen(
-                onBack = {mostrarAddSenha = false}
+                onBack = {mostrarAddSenha = false},
+                onSenhaAdicionada = { novaSenha ->
+                    listaSenhas.add(novaSenha)
+
+                }
             )
         }
     }
 }
 
 @Composable
-fun MoldeCategoria(titulo: String){
+fun MoldeCategoria(
+    titulo: String,
+    listaSenhas: List<ClasseSenha> = emptyList() // pede a lista de senhas como parâmetro
+){
     Column(
         modifier = Modifier.padding(vertical = 8.dp) // espaço de cada categoria
     ) {
@@ -139,6 +192,12 @@ fun MoldeCategoria(titulo: String){
             style = MaterialTheme.typography.titleMedium
         )
         Divider(color = MaterialTheme.colorScheme.primary, thickness = 2.dp)
+
+        // parte que exibe as senha da categoria específica
+        listaSenhas.filter { it.categoria == titulo}.forEach { senha ->
+            MoldeSenha(senha) // isso vai ser recomposto ao adicionar uma nova senha a lista!
+            Spacer(modifier = Modifier.height(8.dp))
+        }
     }
 }
 
