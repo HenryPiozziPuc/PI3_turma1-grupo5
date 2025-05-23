@@ -160,7 +160,7 @@ fun MainScreen() {
                 listaSenhas = listaSenhas)
 
             MoldeCategoria(
-                titulo = "Teclados de acesso físico",
+                titulo = "Teclados de Acesso Físico",
                 listaSenhas = listaSenhas)
 
         }
