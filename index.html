@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SuperID - Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="logo">SuperID</div>
+      <p class="subtitle">Faça login para continuar</p>
+
+      <form id="login-form">
+        <input type="email" id="email" placeholder="E-mail" required />
+        <input type="password" id="password" placeholder="Senha" required />
+        <div class="error-message" id="error-message"></div>
+        <button type="submit" class="btn-primary">Entrar com E-mail</button>
+      </form>
+
+      <div class="divider">ou</div><br />
+
+      <a href="sucesso.html" class="btn-social">
+        <img src="SUPER-ID-ICON-SEMFUNDO.png" alt="SuperID logo" />
+        Entrar com SuperID
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const error = document.getElementById('error-message');
+
+      if (!email || !password) {
+        error.textContent = 'Preencha todos os campos.';
+        return;
+      }
+
+      if (password.length < 6) {
+        error.textContent = 'A senha precisa ter no mínimo 6 caracteres.';
+        return;
+      }
+      error.textContent = '';
+      window.location.href = 'sucesso.html';
+    });
+  </script>
+</body>
+</html>
