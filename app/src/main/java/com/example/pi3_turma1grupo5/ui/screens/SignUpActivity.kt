@@ -30,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,7 +78,9 @@ fun SignUpScreen() {
     val context = LocalContext.current
 
     var emailError by remember { mutableStateOf(false) }
+    var nameError by remember { mutableStateOf(false) }
     var senhaError by remember { mutableStateOf(SenhaError(false, 0)) }
+    var termsError by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -108,13 +109,24 @@ fun SignUpScreen() {
                     .padding(24.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
                     OutlinedTextField(
                         value = name,
-                        onValueChange = { name = it },
+                        onValueChange = {
+                            name = it
+                            nameError = false
+                        },
                         label = { Text("Nome") },
+                        isError = nameError,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    if (nameError) {
+                        Text(
+                            text = "Insira seu nome",
+                            color = Color.Red,
+                            style = Typography.bodySmall,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -143,7 +155,7 @@ fun SignUpScreen() {
                         value = masterPassword,
                         onValueChange = {
                             masterPassword = it
-                            senhaError.hasError = false
+                            senhaError = SenhaError(false, 0)
                         },
                         label = { Text("Senha Mestre") },
                         isError = senhaError.hasError,
@@ -159,13 +171,14 @@ fun SignUpScreen() {
                                 modifier = Modifier.align(Alignment.Start)
                             )
                         }
-                        if(senhaError.errorCode == 1)
+                        if(senhaError.errorCode == 1) {
                             Text(
                                 text = "Senha precisa ter 6 caracteres",
                                 color = Color.Red,
                                 style = Typography.bodySmall,
                                 modifier = Modifier.align(Alignment.Start)
                             )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -176,26 +189,40 @@ fun SignUpScreen() {
                     ) {
                         Checkbox(
                             checked = termsAccepted,
-                            onCheckedChange = { termsAccepted = it }
+                            onCheckedChange = {
+                                termsAccepted = it
+                                termsError = false
+                            }
                         )
                         Text(text = "Eu aceito os ")
                         TextButton(onClick = { showTermsDialog = true }) {
                             Text("Termos de uso")
                         }
                     }
+                    if (termsError) {
+                        Text(
+                            text = "Você precisa aceitar os termos de uso",
+                            color = Color.Red,
+                            style = Typography.bodySmall,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
                         onClick = {
+                            nameError = name.trim().isEmpty()
                             emailError = !isEmailValid(email)
+                            termsError = !termsAccepted
+
                             if(!masterPassword.isNotBlank()){
                                 senhaError = SenhaError(true, 0)
-                            }else if(masterPassword.length < 6) {
+                            } else if(masterPassword.length < 6) {
                                 senhaError = SenhaError(true, 1)
                             }
 
-                            if (!emailError && !senhaError.hasError && termsAccepted) {
+                            if (!nameError && !emailError && !senhaError.hasError && termsAccepted) {
                                 CriarConta(context, name, email, masterPassword) {
                                     val intent = Intent(context, MainActivity::class.java)
                                     context.startActivity(intent)
@@ -203,8 +230,8 @@ fun SignUpScreen() {
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (termsAccepted) DarkBlue else Color.White,
-                            contentColor = if (termsAccepted) Color.White else Color.Gray
+                            containerColor = if (!name.trim().isEmpty() && isEmailValid(email) && masterPassword.length >= 6 && termsAccepted) DarkBlue else Color.LightGray,
+                            contentColor = if (!name.trim().isEmpty() && isEmailValid(email) && masterPassword.length >= 6 && termsAccepted) Color.White else Color.Gray
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -218,7 +245,6 @@ fun SignUpScreen() {
                     ) {
                         Text("Criar conta")
                     }
-
                 }
             }
         }
@@ -230,7 +256,7 @@ fun SignUpScreen() {
                 text = {
                     Box(
                         modifier = Modifier
-                            .heightIn(min = 100.dp, max = 400.dp) // limite para permitir rolagem
+                            .heightIn(min = 100.dp, max = 400.dp)
                             .verticalScroll(rememberScrollState())
                     ) {
                         Text(stringResource(R.string.termos_condicoes))
@@ -306,8 +332,13 @@ fun CriarConta(
                 }
             } else {
                 val exceptionMessage = task.exception?.message ?: ""
-
-                if (!exceptionMessage.contains("email")) {
+                if (exceptionMessage.contains("email")) {
+                    Toast.makeText(
+                        context,
+                        "Este email já está cadastrado. Faça login ou use outro email.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
                     Toast.makeText(context, "Erro ao criar conta: $exceptionMessage", Toast.LENGTH_SHORT).show()
                     Log.e("CriarConta", "Erro", task.exception)
                 }
