@@ -55,6 +55,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.res.stringResource
 import com.example.pi3_turma1grupo5.R
 import com.google.firebase.firestore.FirebaseFirestore
@@ -118,6 +119,7 @@ fun SignUpScreen() {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     OutlinedTextField(
                         value = name,
+                        colors = TextFieldDefaults.colors(),
                         onValueChange = {
                             name = it
                             nameError = false
@@ -144,6 +146,7 @@ fun SignUpScreen() {
                             emailError = false
                         },
                         label = { Text("Email") },
+                        colors = TextFieldDefaults.colors(),
                         isError = emailError,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -165,6 +168,7 @@ fun SignUpScreen() {
                             senhaError = SenhaError(false, 0)
                         },
                         label = { Text("Senha Mestre") },
+                        colors = TextFieldDefaults.colors(),
                         isError = senhaError.hasError,
                         modifier = Modifier.fillMaxWidth(),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),

@@ -105,6 +105,7 @@ fun PasswordRecovry() {
                         value = email,
                         onValueChange = { email = it },
                         placeholder = { Text("Email", fontStyle = FontStyle.Italic) },
+                        colors = TextFieldDefaults.colors(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)

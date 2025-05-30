@@ -102,7 +102,7 @@ import com.google.firebase.auth.auth
                     .clickable(enabled = false){},
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Blue,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = Color.White
                 )
             ) {

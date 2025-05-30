@@ -138,13 +138,16 @@ fun LoginScreen(onLoginAttempt: (String, String) -> Unit) {
                         placeholder = { Text("Email", fontStyle = FontStyle.Italic) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp)
+                            .padding(vertical = 8.dp),
+                        colors = TextFieldDefaults.colors()
+
                     )
 
                     OutlinedTextField(
                         value = senha,
                         onValueChange = { senha = it },
                         placeholder = { Text("Senha", fontStyle = FontStyle.Italic) },
+                        colors = TextFieldDefaults.colors(),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
