@@ -2,6 +2,7 @@ package com.example.pi3_turma1grupo5.ui.components
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -140,7 +141,15 @@ import com.google.firebase.auth.auth
                     OutlinedTextField(
                         value = estadoSenha.senha ?: "",
                         onValueChange = { estadoSenha = estadoSenha.copy(senha = it) },
-                        label = { Text("Senha") },
+                        label = { Text("Senha *") },
+                        isError = estadoSenha.senha.isNullOrEmpty(),
+                        supportingText = {
+                            if (estadoSenha.senha.isNullOrEmpty()) {
+                                Text(
+                                    text = "Campo obrigatório",
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }},
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp),
@@ -167,10 +176,19 @@ import com.google.firebase.auth.auth
                         OutlinedTextField(
                             value = categoriaSelecionada,
                             onValueChange = {},
-                            label = { Text("Categoria") },
+                            label = { Text("Categoria *") },
                             readOnly = true,
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = mostrarMenu)
+                            },
+                            isError = categoriaSelecionada.isEmpty(),
+                            supportingText = {
+                                if (categoriaSelecionada.isEmpty()){
+                                    Text(
+                                        text = "Selecione uma categoria",
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
                             },
                             colors = TextFieldDefaults.colors(),
                             modifier = Modifier
@@ -209,7 +227,8 @@ import com.google.firebase.auth.auth
                                     onSenhaAdicionada(senhaSalva)
                                     onBack()
                                 }
-                            ) },
+                            )
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp),
@@ -217,7 +236,8 @@ import com.google.firebase.auth.auth
                             containerColor = DarkBlue,
                             contentColor = Color.White
                         ),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        enabled = categoriaSelecionada.isNotEmpty() && !estadoSenha.senha.isNullOrEmpty()
                     ) {
                         Text("Adicionar")
                     }

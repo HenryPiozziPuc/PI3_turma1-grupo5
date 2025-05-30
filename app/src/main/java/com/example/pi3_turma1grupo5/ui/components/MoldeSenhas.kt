@@ -12,69 +12,68 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pi3_turma1grupo5.model.ClasseSenha
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
+import com.example.pi3_turma1grupo5.ui.theme.PasswordGray
 
 @Composable
 fun MoldeSenha(
     password: ClasseSenha, // recebe o tipo passwordClass como parâmetro
 ) {
     Card(
+        shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            containerColor = PasswordGray,
         )
     ) {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
 
-
-            Text(
-                    text = password.titulo ?: "",
-                    style = MaterialTheme.typography.titleLarge
+            if(!password.titulo.isNullOrEmpty()) {
+                Text(
+                    text = password.titulo,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
                 )
+            }
 
-
-
-            Text(
-                    text = password.login ?: "",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp)
+            if(!password.login.isNullOrEmpty()) {
+                Text(
+                    text = "Usuário: ${password.login}",
                 )
-
+            }
 
             Text(
-                text = password.senha,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 4.dp)
+                text = "Senha: ${password.senha}",
             )
 
-
-            Text(
-                    text = password.descricao ?: "",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
+            if(!password.descricao.isNullOrEmpty()) {
+                Text(
+                    text = password.descricao,
+                    style = MaterialTheme.typography.bodySmall, // textos pequenos
                 )
+            }
 
             Text(
-                text = password.categoria,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 4.dp)
+                text = "Categoria: ${password.categoria}",
+                style = MaterialTheme.typography.labelSmall, // textos pequenos/ etiquetas
+                color = MaterialTheme.colorScheme.outline
             )
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
