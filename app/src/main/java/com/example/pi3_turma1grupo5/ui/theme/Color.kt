@@ -1,5 +1,6 @@
 package com.example.pi3_turma1grupo5.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -11,6 +12,9 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val BackgroundLight = Color(0xFF828ACF)
+
+val SoftGray = Color(0xFFF5F5F5)
+val PasswordGray = Color(0xA6C6C6C6)
 
 val LightBlue = Color(0xFFCEE1F6)
 val Blue = Color(0xFF2264AE)

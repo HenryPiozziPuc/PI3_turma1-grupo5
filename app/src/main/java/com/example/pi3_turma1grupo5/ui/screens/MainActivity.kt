@@ -5,10 +5,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -20,12 +22,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pi3_turma1grupo5.model.ClasseSenha
 import com.example.pi3_turma1grupo5.ui.components.AdicionarSenhaScreen
+import com.example.pi3_turma1grupo5.ui.components.MoldeCategoria
 import com.example.pi3_turma1grupo5.ui.components.MoldeSenha
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
+import com.example.pi3_turma1grupo5.ui.theme.SoftGray
 import com.example.pi3_turma1grupo5.utils.BuscarSenhas
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -44,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)/*
                                             Existem APIs aqui que ainda são experimentais do material design 3,
-                                            logo precisa add o OptIn para indicar isso
+                                            logo ele pediu para add OptIn para indicar isso
                                         */
 @Composable
 fun MainScreen() {
@@ -56,7 +61,7 @@ fun MainScreen() {
     var mostrarMenu by remember {mutableStateOf(false)} // controlar a visibilidade do menu suspenso
     var mostrarAddSenha by remember {mutableStateOf(false)}
 
-    val listaSenhas = remember { mutableStateListOf<ClasseSenha>() } // lista definitiva (lista observável)
+    val listaSenhas = remember { mutableStateListOf<ClasseSenha>() } // lista definitiva
 
     if(Firebase.auth.currentUser == null){
         Text("Usuário não logado")
@@ -83,6 +88,7 @@ fun MainScreen() {
 
 
     Scaffold(
+        containerColor = SoftGray,
         topBar = {
             TopAppBar(
                 title = { Text("Super ID", style = MaterialTheme.typography.headlineMedium)}, // medium para o título principal
@@ -141,14 +147,16 @@ fun MainScreen() {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
+                .background(SoftGray)
                 .verticalScroll(rememberScrollState()) // permite a rolagem da tela
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ){
             Text(
-                modifier = Modifier.padding(8.dp),
-                text = "Senhas:",
-                style = MaterialTheme.typography.headlineSmall //small para as seções
+                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
+                text = "Suas senhas:",
+                style = MaterialTheme.typography.headlineSmall, //small para as seções
+                fontWeight = FontWeight.SemiBold
             )
 
             MoldeCategoria(
@@ -177,31 +185,6 @@ fun MainScreen() {
         }
     }
 }
-
-@Composable
-fun MoldeCategoria(
-    titulo: String,
-    listaSenhas: List<ClasseSenha> = emptyList() // pede a lista de senhas como parâmetro
-){
-    Column(
-        modifier = Modifier.padding(vertical = 8.dp) // espaço de cada categoria
-    ) {
-        Text(
-            modifier = Modifier.padding(bottom = 4.dp), // bottom -> espaço entre o texto e o divider
-            text = titulo,
-            style = MaterialTheme.typography.titleMedium
-        )
-        Divider(color = MaterialTheme.colorScheme.primary, thickness = 2.dp)
-
-        // parte que exibe as senha da categoria específica
-        listaSenhas.filter { it.categoria == titulo}.forEach { senha ->
-            MoldeSenha(senha) // isso vai ser recomposto ao adicionar uma nova senha a lista!
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-    }
-}
-
-
 
 @Preview(showBackground = true)
 @Composable
