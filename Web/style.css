@@ -1,0 +1,148 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: url(freepik__adjust__52864.png) no-repeat center center fixed;
+  background-size:cover;
+  color: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  padding: 1rem;
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+}
+
+.card {
+  background-color: #1e293b;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #60a5fa;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid #334155;
+  background-color: #0f172a;
+  color: #f8fafc;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.8rem;
+  width: 100%;
+  border: none;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.divider {
+  margin: 1rem 0;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #334155;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #f1f5f9;
+  color: #1e293b;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-social img {
+  width: 20px;
+}
+
+.btn-social:hover {
+  background-color: #e2e8f0;
+}
+
+.error-message {
+  color: #f87171;
+  font-size: 0.85rem;
+  min-height: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 400px) {
+  .card {
+    padding: 1.5rem 1rem;
+  }
+
+  input,
+  .btn-primary,
+  .btn-social {
+    font-size: 0.95rem;
+    padding: 0.7rem;
+  }
+}
