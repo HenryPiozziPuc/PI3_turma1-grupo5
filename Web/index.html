@@ -9,7 +9,7 @@
 <body>
   <div class="container">
     <div class="card">
-      <div class="logo">SuperID</div>
+      <div class="logo">Site Supimpa</div>
       <p class="subtitle">Faça login para continuar</p>
 
       <form id="login-form">
@@ -21,33 +21,61 @@
 
       <div class="divider">ou</div><br />
 
-      <a href="sucesso.html" class="btn-social">
+      <button id="superid-btn" class="btn-social">
         <img src="SUPER-ID-ICON-SEMFUNDO.png" alt="SuperID logo" />
         Entrar com SuperID
-      </a>
+      </button>
 
     </div>
   </div>
 
   <script>
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const error = document.getElementById('error-message');
+    document.addEventListener('DOMContentLoaded', () => {
+      const superIdBtn = document.getElementById('superid-btn');
+      const qrModal = document.getElementById('qr-modal');
+      const qrImage = document.getElementById('qr-image');
+      const closeModal = document.getElementById('close-modal');
 
-      if (!email || !password) {
-        error.textContent = 'Preencha todos os campos.';
-        return;
-      }
+      superIdBtn.addEventListener('click', async () => {
+        try {
+          const response = await fetch('https://performauth-ztx3xoxyzq-uc.a.run.app', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              siteURL: "www.sitesupimpa.com.br",
+              apiKey: "YWpuZHNsY2Rqa24gc2xqZG5jc2tkYyAsbnhzLGRqYXNvZWpuc2tqbmNrZGpuY3Nram5lZm5remRubHNrbnJma3Nqcm5rdmRubGprc25lLGRhc2R3ZWRhc3ZiaWpoZ2E="
+            }),
+          });
 
-      if (password.length < 6) {
-        error.textContent = 'A senha precisa ter no mínimo 6 caracteres.';
-        return;
-      }
-      error.textContent = '';
-      window.location.href = 'sucesso.html';
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Erro desconhecido");
+          }
+          const qrDataUrl = await response.text(); 
+
+          qrImage.src = qrDataUrl;
+          qrModal.classList.remove("hidden");
+
+        } catch (err) {
+          alert("Erro ao carregar QR Code. Tente novamente.");
+          console.error(err);
+        }
+      });
+
+      closeModal.addEventListener('click', () => {
+        qrModal.classList.add('hidden');
+        qrImage.src = '';
+      });
     });
   </script>
+
+  <div id="qr-modal" class="modal hidden">  
+    <div class="modal-content">
+      <span id="close-modal" class="close">&times;</span>
+      <h3 style="color: #1e293b;">Escaneie o QR com o App para se logar</h3>
+      <img id="qr-image" src="" alt="QR Code de autenticação" />
+    </div>
+  </div>
+
 </body>
 </html>
