@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pi3_turma1grupo5.model.ClasseSenha
+import com.example.pi3_turma1grupo5.ui.components.AdicionarCategoriaScreen
 import com.example.pi3_turma1grupo5.ui.components.AdicionarSenhaScreen
 import com.example.pi3_turma1grupo5.ui.components.MoldeCategoria
 import com.example.pi3_turma1grupo5.ui.components.MoldeSenha
@@ -60,8 +61,10 @@ fun MainScreen() {
 
     var mostrarMenu by remember {mutableStateOf(false)} // controlar a visibilidade do menu suspenso
     var mostrarAddSenha by remember {mutableStateOf(false)}
+    var mostrarAddCategoria by remember {mutableStateOf(false)}
 
     val listaSenhas = remember { mutableStateListOf<ClasseSenha>() } // lista definitiva
+    val listaCategorias = remember {mutableStateListOf<String>()}
 
     if(Firebase.auth.currentUser == null){
         Text("Usuário não logado")
@@ -118,6 +121,7 @@ fun MainScreen() {
                             text = {Text("Adicionar nova categoria")},
                             onClick = {
                                 mostrarMenu = false
+                                mostrarAddCategoria = true // indica que o compose de nova categoria foi acionado
                             }
                         )
                     }
@@ -183,8 +187,18 @@ fun MainScreen() {
                 }
             )
         }
+
+       if(mostrarAddCategoria){
+            AdicionarCategoriaScreen(
+                onBack = {mostrarAddCategoria = false},
+                onCategoriaAdicionada = {novaCategoria ->
+                    listaCategorias.add(novaCategoria)
+                }
+            )
+        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
