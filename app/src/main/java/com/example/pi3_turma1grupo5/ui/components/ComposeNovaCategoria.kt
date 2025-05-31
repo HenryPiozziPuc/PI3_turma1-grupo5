@@ -29,11 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
+import com.example.pi3_turma1grupo5.utils.AddCategoryBD
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
@@ -41,11 +43,9 @@ import com.google.firebase.auth.auth
 @Composable
 fun AdicionarCategoriaScreen(
     onBack: () -> Unit,
-    //onCategoriaAdicionada:
+    onCategoriaAdicionada: (String) -> Unit
 ){
     val auth = Firebase.auth
-    val user = auth.currentUser
-    val uid = user?.uid
 
     var tituloCategoria by remember { mutableStateOf("") }
 
@@ -99,8 +99,19 @@ fun AdicionarCategoriaScreen(
                         .padding(vertical = 4.dp),
                     colors = TextFieldDefaults.colors()
                 )
+
+                val context = LocalContext.current
                 Button(
-                    onClick = {},
+                    onClick = {
+                        AddCategoryBD(
+                            tituloCategoria,
+                            context = context,
+                            onCategoriaAdicionada = {categoriaSalva ->
+                                onCategoriaAdicionada(categoriaSalva)
+                                onBack()
+                            }
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),

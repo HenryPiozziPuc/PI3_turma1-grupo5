@@ -1,7 +1,6 @@
 package com.example.pi3_turma1grupo5.utils
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import com.example.pi3_turma1grupo5.model.ClasseSenha
 import com.example.pi3_turma1grupo5.crypto.PasswordCrypto
@@ -12,7 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 fun AddPasswordBD(
     password: ClasseSenha,
-    context: Context,
+    context: Context, // utilizado para mostrar os 'Toasts'
     onSenhaAdicionada: (ClasseSenha) -> Unit = {},
     onBack: () -> Unit = {}
 ){

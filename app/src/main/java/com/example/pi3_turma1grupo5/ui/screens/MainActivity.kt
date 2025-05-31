@@ -64,6 +64,7 @@ fun MainScreen() {
     var mostrarAddCategoria by remember {mutableStateOf(false)}
 
     val listaSenhas = remember { mutableStateListOf<ClasseSenha>() } // lista definitiva
+    val listaCategorias = remember {mutableStateListOf<String>()}
 
     if(Firebase.auth.currentUser == null){
         Text("Usuário não logado")
@@ -190,6 +191,9 @@ fun MainScreen() {
        if(mostrarAddCategoria){
             AdicionarCategoriaScreen(
                 onBack = {mostrarAddCategoria = false},
+                onCategoriaAdicionada = {novaCategoria ->
+                    listaCategorias.add(novaCategoria)
+                }
             )
         }
     }
