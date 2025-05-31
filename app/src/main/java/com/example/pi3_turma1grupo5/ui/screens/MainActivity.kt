@@ -32,6 +32,7 @@ import com.example.pi3_turma1grupo5.ui.components.MoldeCategoria
 import com.example.pi3_turma1grupo5.ui.components.MoldeSenha
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.example.pi3_turma1grupo5.ui.theme.SoftGray
+import com.example.pi3_turma1grupo5.utils.BuscarCategorias
 import com.example.pi3_turma1grupo5.utils.BuscarSenhas
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -82,6 +83,30 @@ fun MainScreen() {
                     onSuccess = { senhas ->
                         listaSenhas.clear()
                         listaSenhas.addAll(senhas)
+                    }
+                )
+            }
+        }
+    }
+
+    // busca as categorias personalizadas quando a tela é aberta
+    LaunchedEffect(Unit) {
+        Firebase.auth.currentUser?.uid?.let { uid ->
+            if(!uid.isNullOrEmpty()){
+                BuscarCategorias(
+                    uid = uid,
+                    onSuccess = {categorias ->
+                        /*
+                            "(_,existeSenha)": mostra que só vai usar o segundo valor da lista
+                            "-> existeSenhas": mostra que a ordenacao vai usar o que estiver depois da seta como parametro
+                        */
+                        val categoriasOrdenadas = categorias
+                            .sortedByDescending { (_, existeSenhas) -> existeSenhas}
+                            .map { (nomeCategoria,_) -> nomeCategoria } // map muda de List<Pair para List<string
+
+
+                        listaCategorias.clear()
+                        listaCategorias.addAll(categoriasOrdenadas)
                     }
                 )
             }
@@ -163,18 +188,12 @@ fun MainScreen() {
                 fontWeight = FontWeight.SemiBold
             )
 
-            MoldeCategoria(
-                titulo = "Sites Web",
-                listaSenhas = listaSenhas)
-
-            MoldeCategoria(
-                titulo = "Aplicativos",
-                listaSenhas = listaSenhas)
-
-            MoldeCategoria(
-                titulo = "Teclados de Acesso Físico",
-                listaSenhas = listaSenhas)
-
+            listaCategorias.forEach { categoria ->
+                MoldeCategoria(
+                    titulo = categoria,
+                    listaSenhas = listaSenhas
+                )
+            }
         }
 
         // abre o compose da nova senha e cria o callback "onSenhaAdicionada"

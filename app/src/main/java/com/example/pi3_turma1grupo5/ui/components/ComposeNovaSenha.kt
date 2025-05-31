@@ -52,7 +52,7 @@ import com.example.pi3_turma1grupo5.ui.theme.Blue
 import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.example.pi3_turma1grupo5.utils.AddPasswordBD
-import com.example.pi3_turma1grupo5.utils.buscarCategorias
+import com.example.pi3_turma1grupo5.utils.BuscarCategorias
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
@@ -77,11 +77,11 @@ import com.google.firebase.auth.auth
         // LahchedEffect: é executado quando o componente inicia
         LaunchedEffect(uid) {
             if (!uid.isNullOrEmpty()) {
-                buscarCategorias(
+                BuscarCategorias(
                     uid = uid,
                     onSuccess = { categorias ->
                         listacategorias.clear()
-                        listacategorias.addAll(categorias)
+                        listacategorias.addAll(categorias.map {it.first})
                     },
                 )
             }
