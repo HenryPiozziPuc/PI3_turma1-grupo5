@@ -36,9 +36,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.material3.AlertDialog
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -97,14 +95,10 @@ fun QRCodeScannerScreen() {
             ) {
                 CameraPreview { qrValue ->
                     Log.d("SuperIDAuth", "Valor lido do QR: [$qrValue], length: ${qrValue.length}")
-                    if (isQRCodeValid(qrValue)) {
                         autenticarLoginToken(qrValue,
                             onSuccess = { showSuccessDialog = true },
                             onFailure = { showErrorDialog = true }
                         )
-                    } else {
-                        showErrorDialog = true
-                    }
                 }
             }
         } else {
@@ -212,6 +206,9 @@ class QRCodeAnalyzer(
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
+                barcodes.forEach { barcode ->
+                    Log.d("SuperIDAuth", "QR detectado: ${barcode.rawValue}, tamanho: ${barcode.rawValue?.length}")
+                }
                 val value = barcodes.firstOrNull()?.rawValue
                 if (value != null) {
                     alreadyScanned = true
@@ -222,10 +219,6 @@ class QRCodeAnalyzer(
                 imageProxy.close()
             }
     }
-}
-
-fun isQRCodeValid(qrValue: String): Boolean {
-    return qrValue.length == 256
 }
 
 fun autenticarLoginToken(

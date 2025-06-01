@@ -6,6 +6,7 @@
   <title>SuperID - Login</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 <body>
   <div class="container">
     <div class="card">
@@ -53,7 +54,18 @@
           }
           const { qrCode, loginToken } = await response.json();
 
-          qrImage.src = qrCode;
+          //qrImage.src = qrCode;
+          //qrImage.alt = loginToken;
+
+          document.getElementById("qr-render").innerHTML = "";
+
+          new QRCode(document.getElementById("qr-render"), {
+            text: loginToken,
+            width: 256,
+            height: 256,
+            correctLevel: QRCode.CorrectLevel.L 
+          });
+
           qrModal.classList.remove("hidden");
 
           startPolling(loginToken); // função que vai verificar status do login
@@ -115,7 +127,7 @@
     <div class="modal-content">
       <span id="close-modal" class="close">&times;</span>
       <h3 style="color: #1e293b;">Escaneie o QR com o App para se logar</h3>
-      <img id="qr-image" src="" alt="QR Code de autenticação" />
+      <div id="qr-render" style="margin-top: 20px;"></div>
     </div>
   </div>
 
