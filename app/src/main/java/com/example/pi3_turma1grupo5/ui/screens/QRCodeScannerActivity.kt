@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
@@ -35,7 +36,11 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.material3.AlertDialog
-
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 class QRCodeScannerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,9 +96,12 @@ fun QRCodeScannerScreen() {
                     .background(Blue)
             ) {
                 CameraPreview { qrValue ->
-                    scannedValue = qrValue
+                    Log.d("SuperIDAuth", "Valor lido do QR: [$qrValue], length: ${qrValue.length}")
                     if (isQRCodeValid(qrValue)) {
-                        showSuccessDialog = true
+                        autenticarLoginToken(qrValue,
+                            onSuccess = { showSuccessDialog = true },
+                            onFailure = { showErrorDialog = true }
+                        )
                     } else {
                         showErrorDialog = true
                     }
@@ -217,5 +225,54 @@ class QRCodeAnalyzer(
 }
 
 fun isQRCodeValid(qrValue: String): Boolean {
-    return qrValue.startsWith("https:")
+    return qrValue.length == 256
+}
+
+fun autenticarLoginToken(
+    token: String,
+    onSuccess: () -> Unit,
+    onFailure: () -> Unit
+) {
+    val user = FirebaseAuth.getInstance().currentUser
+
+    if (user == null) {
+        Log.e("SuperIDAuth", "Usuário não autenticado")
+        onFailure()
+        return
+    }
+
+    val db = FirebaseFirestore.getInstance()
+
+    db.collection("login")
+        .whereEqualTo("loginToken", token)
+        .limit(1)
+        .get()
+        .addOnSuccessListener { result ->
+            Log.d("SuperIDAuth", "Buscando token: $token")
+            if (!result.isEmpty) {
+                val doc = result.documents.first()
+                Log.d("SuperIDAuth", "Documento encontrado: ${doc.id}")
+
+                val docRef = doc.reference
+                docRef.update(
+                    mapOf(
+                        "user" to user.uid,
+                        "authenticatedAt" to FieldValue.serverTimestamp()
+                    )
+                ).addOnSuccessListener {
+                    Log.d("SuperIDAuth", "Token confirmado com sucesso.")
+                    onSuccess()
+                }.addOnFailureListener {
+                    Log.e("SuperIDAuth", "Falha ao atualizar Firestore", it)
+                    onFailure()
+                }
+            } else {
+                Log.e("SuperIDAuth", "Token não encontrado no Firestore")
+                onFailure()
+            }
+        }
+        .addOnFailureListener {
+            Log.e("SuperIDAuth", "Erro ao buscar token no Firestore", it)
+            onFailure()
+        }
 }

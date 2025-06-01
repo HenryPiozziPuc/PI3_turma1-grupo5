@@ -1,5 +1,4 @@
 package com.example.pi3_turma1grupo5.ui.screens
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -293,11 +292,11 @@ fun SignUpScreen() {
 }
 
 fun CriarConta(
-    context: Context,
-    name: String,
-    email: String,
-    masterPassword: String,
-    onSuccess: () -> Unit
+               context: Context,
+               name: String,
+               email: String,
+               masterPassword: String,
+               onSuccess: () -> Unit
 ) {
     val auth = Firebase.auth
     val firestore = FirebaseFirestore.getInstance()
@@ -321,44 +320,43 @@ fun CriarConta(
                     firestore.collection("usuarios").document(uid)
                         .set(userDoc)
                         .addOnSuccessListener {
-                            firestore.collection("usuarios").document(uid)
-                                .collection("senhas")
-                                .document("placeholder")
-                                .set(hashMapOf("placeholder" to true))
+                            val senhasCollection = firestore.collection("usuarios").document(uid)
+                                .collection("categorias")
+
+
+
+                            val categoriasIniciais = listOf(
+                                "Sites Web",
+                                "Aplicativos",
+                                "Teclados de Acesso Físico"
+                            )
+
+                            for (categoria in categoriasIniciais) {
+                                senhasCollection.document(categoria)
+                                    .set(hashMapOf("criadoEm" to System.currentTimeMillis()))
+                            }
                             user.sendEmailVerification()
-                                .addOnCompleteListener { emailTask ->
-                                    if (emailTask.isSuccessful) {
-                                        Toast.makeText(
-                                            context,
-                                            "Conta criada com sucesso! Verifique seu email para ativar a conta.",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-
-                                        onSuccess()
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            "Conta criada, mas falha ao enviar email de verificação.",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-
-                                        onSuccess()
-                                    }
+                                .addOnCompleteListener {
+                                    Toast.makeText(
+                                        context,
+                                        "Conta criada com sucesso! Verifique seu email.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    onSuccess()
                                 }
                         }
                         .addOnFailureListener {
-                            Toast.makeText(context, "Erro ao salvar dados no Firestore", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Erro ao salvar dados no Firestore",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                 }
             } else {
                 val exceptionMessage = task.exception?.message ?: ""
-                if (exceptionMessage.contains("email")) {
-                    Toast.makeText(
-                        context,
-                        "Este email já está cadastrado. Faça login ou use outro email.",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
+
+                if (!exceptionMessage.contains("email")) {
                     Toast.makeText(context, "Erro ao criar conta: $exceptionMessage", Toast.LENGTH_SHORT).show()
                     Log.e("CriarConta", "Erro", task.exception)
                 }
