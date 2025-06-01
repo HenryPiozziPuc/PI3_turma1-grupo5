@@ -34,6 +34,7 @@ import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.example.pi3_turma1grupo5.ui.theme.SoftGray
 import com.example.pi3_turma1grupo5.utils.BuscarCategorias
 import com.example.pi3_turma1grupo5.utils.BuscarSenhas
+import com.example.pi3_turma1grupo5.utils.CarregarCategorias
 import com.example.pi3_turma1grupo5.utils.refreshAll
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
@@ -102,22 +103,7 @@ fun MainScreen() {
     LaunchedEffect(Unit) {
         Firebase.auth.currentUser?.uid?.let { uid ->
             if(!uid.isNullOrEmpty()){
-                BuscarCategorias(
-                    uid = uid,
-                    onSuccess = {categorias ->
-                        /*
-                            "(_,existeSenha)": mostra que só vai usar o segundo valor da lista
-                            "-> existeSenhas": mostra que a ordenacao vai usar o que estiver depois da seta como parametro
-                        */
-                        val categoriasOrdenadas = categorias
-                            .sortedByDescending { (_, existeSenhas) -> existeSenhas}
-                            .map { (nomeCategoria,_) -> nomeCategoria } // map muda de List<Pair para List<string
-
-
-                        listaCategorias.clear()
-                        listaCategorias.addAll(categoriasOrdenadas)
-                    }
-                )
+                CarregarCategorias(listaCategorias)
             }
         }
     }
@@ -217,7 +203,8 @@ fun MainScreen() {
                  listaCategorias.forEach { categoria ->
                      MoldeCategoria(
                          titulo = categoria,
-                         listaSenhas = listaSenhas
+                         listaSenhas = listaSenhas,
+                         listaCategorias = listaCategorias
                      )
                  }
              }
@@ -226,6 +213,7 @@ fun MainScreen() {
              if(mostrarAddSenha) {
                  AdicionarSenhaScreen(
                      onBack = {mostrarAddSenha = false},
+                     listaCategorias = listaCategorias,
                      onSenhaAdicionada = { novaSenha ->
                          listaSenhas.add(novaSenha)
 

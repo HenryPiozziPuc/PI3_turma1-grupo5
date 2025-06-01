@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 fun AddPasswordBD(
     password: ClasseSenha,
+    listaCategorias: MutableList<String>,
     context: Context, // utilizado para mostrar os 'Toasts'
     onSenhaAdicionada: (ClasseSenha) -> Unit = {},
     onBack: () -> Unit = {}
@@ -42,6 +43,7 @@ fun AddPasswordBD(
                 Toast.makeText(context, "Senha salva com sucesso!", Toast.LENGTH_SHORT).show()
 
                 onSenhaAdicionada(password)
+                CarregarCategorias(listaCategorias)
                 onBack()
             }
             .addOnFailureListener { e ->
