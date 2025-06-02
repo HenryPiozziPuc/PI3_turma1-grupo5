@@ -7,11 +7,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -39,6 +41,8 @@ import com.example.pi3_turma1grupo5.utils.refreshAll
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.platform.LocalConfiguration
 
 
 import com.google.firebase.auth.ktx.auth
@@ -67,17 +71,17 @@ fun MainScreen() {
     val user = auth.currentUser
     val uid = user?.uid
 
-    var mostrarMenu by remember {mutableStateOf(false)} // controlar a visibilidade do menu suspenso
-    var mostrarAddSenha by remember {mutableStateOf(false)}
-    var mostrarAddCategoria by remember {mutableStateOf(false)}
+    var mostrarMenu by remember { mutableStateOf(false) } // controlar a visibilidade do menu suspenso
+    var mostrarAddSenha by remember { mutableStateOf(false) }
+    var mostrarAddCategoria by remember { mutableStateOf(false) }
 
     val listaSenhas = remember { mutableStateListOf<ClasseSenha>() } // lista definitiva
-    val listaCategorias = remember {mutableStateListOf<String>()}
+    val listaCategorias = remember { mutableStateListOf<String>() }
 
-    var isRefreshing by remember {mutableStateOf(false)}
+    var isRefreshing by remember { mutableStateOf(false) }
 
 
-    if(Firebase.auth.currentUser == null){
+    if (Firebase.auth.currentUser == null) {
         Text("Usuário não logado")
         return
     }
@@ -85,8 +89,8 @@ fun MainScreen() {
 
     // busca as senhas quando a tela é aberta
     //LahchedEffect: é executado quando o componente inicia
-    LaunchedEffect(Unit){
-        Firebase.auth.currentUser?.uid?.let {uid ->
+    LaunchedEffect(Unit) {
+        Firebase.auth.currentUser?.uid?.let { uid ->
             if (!uid.isNullOrEmpty()) {
                 BuscarSenhas(
                     uid = uid,
@@ -102,7 +106,7 @@ fun MainScreen() {
     // busca as categorias personalizadas quando a tela é aberta
     LaunchedEffect(Unit) {
         Firebase.auth.currentUser?.uid?.let { uid ->
-            if(!uid.isNullOrEmpty()){
+            if (!uid.isNullOrEmpty()) {
                 CarregarCategorias(listaCategorias)
             }
         }
@@ -114,7 +118,12 @@ fun MainScreen() {
         containerColor = SoftGray,
         topBar = {
             TopAppBar(
-                title = { Text("Super ID", style = MaterialTheme.typography.headlineMedium)}, // medium para o título principal
+                title = {
+                    Text(
+                        "Super ID",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                }, // medium para o título principal
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -126,22 +135,26 @@ fun MainScreen() {
                     //Menu suspenso "+"
                     DropdownMenu(
                         expanded = mostrarMenu,
-                        onDismissRequest = {mostrarMenu = false}// se o usuário clicar fora o menu fecha
+                        onDismissRequest = {
+                            mostrarMenu = false
+                        }// se o usuário clicar fora o menu fecha
                     ) {
                         // 1 opção
                         DropdownMenuItem(
-                            text = { Text("Adicionar nova senha")},
+                            text = { Text("Adicionar nova senha") },
                             onClick = {
                                 mostrarMenu = false// fecha o menu depois de escolher a opção
-                                mostrarAddSenha = true // indica que o compose de nova senha foi acionado
+                                mostrarAddSenha =
+                                    true // indica que o compose de nova senha foi acionado
                             }
                         )
                         // 2 opção
                         DropdownMenuItem(
-                            text = {Text("Adicionar nova categoria")},
+                            text = { Text("Adicionar nova categoria") },
                             onClick = {
                                 mostrarMenu = false
-                                mostrarAddCategoria = true // indica que o compose de nova categoria foi acionado
+                                mostrarAddCategoria =
+                                    true // indica que o compose de nova categoria foi acionado
                             }
                         )
                     }
@@ -162,82 +175,72 @@ fun MainScreen() {
                 },
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 60.dp)
-            ){
+            ) {
                 Icon(Icons.Default.QrCode, "QR Code")
             }
         }
     ) { innerPadding ->
-        // SwipeRefresh: reage ao usuario arrastar a tela para baixo (ativação)
-        SwipeRefresh( // ao puxar a tela para o refresh, é aqui que a operação se inicia
-            state = SwipeRefreshState(isRefreshing = isRefreshing),
-            onRefresh = { refreshAll(
-                onStart = { isRefreshing = true }, // mostra o icone de loading
-                onComplete = { isRefreshing = false }, // esconde o icone
-                onCategoriesLoaded = { categories ->
-                    listaCategorias.clear()
-                    listaCategorias.addAll(categories) // aqui é recomposta a tela
+        // 1. Box principal que contém tudo
+        Box(modifier = Modifier.fillMaxSize()) {
+            // 2. SwipeRefresh como único componente rolável
+            SwipeRefresh(
+                state = SwipeRefreshState(isRefreshing = isRefreshing),
+                onRefresh = {
+                    refreshAll(
+                        onStart = { isRefreshing = true },
+                        onComplete = { isRefreshing = false },
+                        onCategoriesLoaded = { listaCategorias.clear(); listaCategorias.addAll(it) },
+                        onPasswordsLoaded = { listaSenhas.clear(); listaSenhas.addAll(it) }
+                    )
                 },
-                onPasswordsLoaded = { passwords ->
-                    listaSenhas.clear()
-                    listaSenhas.addAll(passwords)
+                modifier = Modifier.fillMaxSize()
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentPadding = innerPadding,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            Text(
+                                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
+                                text = "Suas senhas:",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
+                    items(listaCategorias) { categoria ->
+                        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            MoldeCategoria(
+                                titulo = categoria,
+                                listaSenhas = listaSenhas.filter { it.categoria == categoria },
+                                listaCategorias = listaCategorias
+                            )
+                        }
+                    }
                 }
-            )
-        }
-        ){
-             Column(
-                 modifier = Modifier
-                     .padding(innerPadding)
-                     .fillMaxSize()
-                     .background(SoftGray)
-                     .verticalScroll(rememberScrollState()) // permite a rolagem da tela
-                     .padding(horizontal = 16.dp),
-                 verticalArrangement = Arrangement.spacedBy(16.dp)
-             ){
-                 Text(
-                     modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-                     text = "Suas senhas:",
-                     style = MaterialTheme.typography.headlineSmall, //small para as seções
-                     fontWeight = FontWeight.SemiBold
-                 )
+            }
 
-                 listaCategorias.forEach { categoria ->
-                     MoldeCategoria(
-                         titulo = categoria,
-                         listaSenhas = listaSenhas,
-                         listaCategorias = listaCategorias
-                     )
-                 }
-             }
+            // 4. Telas modais (sobrepostas)
+            if (mostrarAddSenha) {
+                AdicionarSenhaScreen(
+                    onBack = { mostrarAddSenha = false },
+                    listaCategorias = listaCategorias,
+                    onSenhaAdicionada = { novaSenha ->
+                        listaSenhas.add(novaSenha)
+                    }
+                )
+            }
 
-             // abre o compose da nova senha e cria o callback "onSenhaAdicionada"
-             if(mostrarAddSenha) {
-                 AdicionarSenhaScreen(
-                     onBack = {mostrarAddSenha = false},
-                     listaCategorias = listaCategorias,
-                     onSenhaAdicionada = { novaSenha ->
-                         listaSenhas.add(novaSenha)
-
-                     }
-                 )
-             }
-
-            if(mostrarAddCategoria){
-                 AdicionarCategoriaScreen(
-                     onBack = {mostrarAddCategoria = false},
-                     onCategoriaAdicionada = {novaCategoria ->
-                         listaCategorias.add(novaCategoria)
-                         }
-                     )
-                 }
+            if (mostrarAddCategoria) {
+                AdicionarCategoriaScreen(
+                    onBack = { mostrarAddCategoria = false },
+                    onCategoriaAdicionada = { listaCategorias.add(it) }
+                )
             }
         }
-    }
-
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    PI3_turma1grupo5Theme {
-        MainScreen()
     }
 }

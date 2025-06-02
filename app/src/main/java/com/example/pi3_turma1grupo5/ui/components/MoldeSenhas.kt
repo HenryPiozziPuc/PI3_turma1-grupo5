@@ -15,6 +15,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,11 +30,15 @@ import com.example.pi3_turma1grupo5.ui.theme.PasswordGray
 @Composable
 fun MoldeSenha(
     password: ClasseSenha, // recebe o tipo passwordClass como parâmetro
+    listaCategorias: MutableList<String>
 ) {
+    var mostrarEditarSenha by remember { mutableStateOf(false) }
+
     Card(
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { mostrarEditarSenha = true}
             .padding(vertical = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = PasswordGray,
@@ -71,22 +79,15 @@ fun MoldeSenha(
                 style = MaterialTheme.typography.labelSmall, // textos pequenos/ etiquetas
                 color = MaterialTheme.colorScheme.outline
             )
-        }
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun MoldeSenhaPreview() {
-    PI3_turma1grupo5Theme {
-        MoldeSenha(
-            password = ClasseSenha(
-                titulo = "Gov Br",
-                login = "bruno@bruno.com",
-                senha = "24#qwe",
-                categoria = "Sites Web",
-                descricao = "IR"
-            )
-        )
+            if(mostrarEditarSenha){
+                EditarSenhaScreen(
+                    onBack = {mostrarEditarSenha = false},
+                    listaCategorias = listaCategorias,
+                    senhaAtual = password,
+                    onSenhaExcluida = {senhaExcluida ->}
+                )
+            }
+        }
     }
 }

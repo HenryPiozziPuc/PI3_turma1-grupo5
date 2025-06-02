@@ -37,7 +37,7 @@ import com.google.firebase.auth.auth
 @Composable
 fun MoldeCategoria(
     titulo: String,
-    listaSenhas: List<ClasseSenha> = emptyList(), // pede a lista de senhas como parâmetro
+    listaSenhas: List<ClasseSenha> = emptyList(),
     listaCategorias: MutableList<String>
 ){
     val senhasCategoria = listaSenhas.filter { it.categoria == titulo }
@@ -82,7 +82,10 @@ fun MoldeCategoria(
 
                 // parte que exibe as senha da categoria especifica
                 listaSenhas.filter { it.categoria == titulo}.forEach { senha ->
-                    MoldeSenha(senha) // isso vai ser recomposto ao adicionar uma nova senha a  lista
+                    MoldeSenha(
+                        password = senha,
+                        listaCategorias = listaCategorias,
+                    ) // isso vai ser recomposto ao adicionar uma nova senha a  lista
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }

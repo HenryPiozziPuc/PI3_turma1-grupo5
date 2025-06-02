@@ -5,9 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -52,19 +54,17 @@ import com.example.pi3_turma1grupo5.crypto.PasswordCrypto
 fun EditarSenhaScreen(
     onBack: () -> Unit,
     listaCategorias: MutableList<String>,
-    senhaAtual: ClasseSenha = ClasseSenha()
+    senhaAtual: ClasseSenha = ClasseSenha(),
+    onSenhaExcluida: (ClasseSenha) -> Unit
 ) {
     val auth = Firebase.auth
     val user = auth.currentUser
     val uid = user?.uid
 
     var estadoSenha by remember { mutableStateOf(senhaAtual) }
-    var categoriaSelecionada by remember { mutableStateOf(senhaAtual.categoria ?: "") }
     var mostrarMenu by remember { mutableStateOf(false) }
+    var categoriaSelecionada by remember { mutableStateOf(senhaAtual.categoria ?: "") }
 
-
-    // busca as categorias quando a tela é aberta
-    // LahchedEffect: é executado quando o componente inicia
     LaunchedEffect(uid) {
         if (!uid.isNullOrEmpty()) {
             CarregarCategorias(listaCategorias)
@@ -96,10 +96,133 @@ fun EditarSenhaScreen(
                     .verticalScroll(rememberScrollState())
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ) {}
+            ) {
+                Text(
+                    text = "Editar Senha",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                OutlinedTextField(
+                    value = estadoSenha.titulo ?: "",
+                    onValueChange = { estadoSenha = estadoSenha.copy(titulo = it) },
+                    label = { Text("Título") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    colors = TextFieldDefaults.colors()
+                )
+
+                OutlinedTextField(
+                    value = estadoSenha.login ?: "",
+                    onValueChange = { estadoSenha = estadoSenha.copy(login = it) },
+                    label = { Text("Login") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    colors = TextFieldDefaults.colors()
+                )
+
+                OutlinedTextField(
+                    value = estadoSenha.senha ?: "",
+                    onValueChange = { estadoSenha = estadoSenha.copy(senha = it) },
+                    label = { Text("Senha *") },
+                    isError = estadoSenha.senha.isNullOrEmpty(),
+                    supportingText = {
+                        if (estadoSenha.senha.isNullOrEmpty()) {
+                            Text(
+                                text = "Campo obrigatório",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    colors = TextFieldDefaults.colors()
+                )
+
+                OutlinedTextField(
+                    value = estadoSenha.descricao ?: "",
+                    onValueChange = { estadoSenha = estadoSenha.copy(descricao = it) },
+                    label = { Text("Descrição") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    colors = TextFieldDefaults.colors(),
+                    maxLines = 2
+                )
+
+                ExposedDropdownMenuBox(
+                    expanded = mostrarMenu,
+                    onExpandedChange = { mostrarMenu = !mostrarMenu },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = categoriaSelecionada,
+                        onValueChange = {},
+                        label = { Text("Categoria *") },
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = mostrarMenu)
+                        },
+                        isError = categoriaSelecionada.isEmpty(),
+                        supportingText = {
+                            if (categoriaSelecionada.isEmpty()) {
+                                Text(
+                                    text = "Selecione uma categoria",
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        colors = TextFieldDefaults.colors(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = mostrarMenu,
+                        onDismissRequest = { mostrarMenu = false }
+                    ) {
+                        listaCategorias.forEach { categoria ->
+                            DropdownMenuItem(
+                                text = { Text(categoria) },
+                                onClick = {
+                                    categoriaSelecionada = categoria
+                                    mostrarMenu = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                val context = LocalContext.current
+                Button(
+                    onClick = {
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = DarkBlue,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = categoriaSelecionada.isNotEmpty() && !estadoSenha.senha.isNullOrEmpty()
+                ) {
+                    Text("Salvar")
+                }
+            }
         }
     }
 }
+
+
 
 
 
