@@ -67,7 +67,9 @@ dependencies {
     // authentication
     implementation("com.google.firebase:firebase-auth-ktx:23.2.0")
 
+    implementation("androidx.compose.material:material:1.6.2")
     implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.34.0")
 
     // CameraX
     implementation("androidx.camera:camera-camera2:1.4.2")

@@ -36,7 +36,7 @@ import com.example.pi3_turma1grupo5.ui.theme.BackgroundLight
 import com.example.pi3_turma1grupo5.ui.theme.Blue
 import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
 import com.example.pi3_turma1grupo5.ui.theme.LightBlue
-
+//Pagina simples que permite a criação de conta ou login
 class WelcomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

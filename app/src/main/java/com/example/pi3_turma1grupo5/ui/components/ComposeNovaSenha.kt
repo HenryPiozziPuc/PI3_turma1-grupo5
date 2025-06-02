@@ -52,7 +52,8 @@ import com.example.pi3_turma1grupo5.ui.theme.Blue
 import com.example.pi3_turma1grupo5.ui.theme.DarkBlue
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.example.pi3_turma1grupo5.utils.AddPasswordBD
-import com.example.pi3_turma1grupo5.utils.buscarCategorias
+import com.example.pi3_turma1grupo5.utils.BuscarCategorias
+import com.example.pi3_turma1grupo5.utils.CarregarCategorias
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
@@ -61,6 +62,7 @@ import com.google.firebase.auth.auth
     @Composable
     fun AdicionarSenhaScreen(
         onBack: () -> Unit,
+        listaCategorias: MutableList<String>,
         objSenha: ClasseSenha = ClasseSenha(),
         onSenhaAdicionada: (ClasseSenha) -> Unit
     ) {
@@ -71,19 +73,12 @@ import com.google.firebase.auth.auth
         var estadoSenha by remember { mutableStateOf(objSenha) }
         var mostrarMenu by remember {mutableStateOf(false)} // controla a visibilidade do menu suspenso
         var categoriaSelecionada by remember { mutableStateOf("") }
-        val listacategorias = remember { mutableStateListOf<String>()}
 
         // busca as categorias quando a tela é aberta
         // LahchedEffect: é executado quando o componente inicia
         LaunchedEffect(uid) {
             if (!uid.isNullOrEmpty()) {
-                buscarCategorias(
-                    uid = uid,
-                    onSuccess = { categorias ->
-                        listacategorias.clear()
-                        listacategorias.addAll(categorias)
-                    },
-                )
+                CarregarCategorias(listaCategorias)
             }
         }
 
@@ -201,7 +196,7 @@ import com.google.firebase.auth.auth
                             expanded = mostrarMenu,
                             onDismissRequest = { mostrarMenu = false }
                         ) {
-                                listacategorias.forEach { categoria ->
+                                listaCategorias.forEach { categoria ->
                                     DropdownMenuItem(
                                         text = { Text(categoria) },
                                         onClick = {
@@ -222,6 +217,7 @@ import com.google.firebase.auth.auth
                                 password = estadoSenha.copy(
                                     categoria = categoriaSelecionada // adiciona o campo "categoria" do objeto
                                 ),
+                                listaCategorias = listaCategorias,
                                 context = context,
                                 onSenhaAdicionada = {senhaSalva ->
                                     onSenhaAdicionada(senhaSalva)
@@ -250,10 +246,3 @@ import com.google.firebase.auth.auth
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun AddSenhaPreview(){
-    PI3_turma1grupo5Theme{
-        AdicionarSenhaScreen(onBack = {},  objSenha = ClasseSenha(), onSenhaAdicionada = {})
-    }
-}

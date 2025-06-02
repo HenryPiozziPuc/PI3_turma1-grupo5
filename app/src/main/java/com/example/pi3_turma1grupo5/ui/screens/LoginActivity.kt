@@ -26,8 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview // <-- IMPORTANTE pra funcionar o Preview!
-import android.util.Log
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.platform.LocalContext
 import com.example.pi3_turma1grupo5.ui.theme.BackgroundLight
@@ -36,11 +35,10 @@ import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-
+//Pagina que permite o login à conta previamente criada
 class LoginActivity: ComponentActivity() {
 
     private val auth: FirebaseAuth = Firebase.auth
-    private val tag = "LoginAuth"
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
@@ -54,17 +52,13 @@ class LoginActivity: ComponentActivity() {
         }
     }
 
-
-    // função para o usuário fazer o login
     private fun loginUserAuth(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Log.d(tag, "Login realizado com sucesso!")
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
-                    Log.w(tag, "Erro no login.", task.exception)
                     Toast.makeText(
                         this,
                         "falha na autenticação.",
@@ -76,13 +70,10 @@ class LoginActivity: ComponentActivity() {
 
 }
 
-
-
-
 @Composable
 fun LoginScreen(onLoginAttempt: (String, String) -> Unit) {
     var email by remember { mutableStateOf("") }
-    var senha by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     Box(
@@ -144,8 +135,8 @@ fun LoginScreen(onLoginAttempt: (String, String) -> Unit) {
                     )
 
                     OutlinedTextField(
-                        value = senha,
-                        onValueChange = { senha = it },
+                        value = password,
+                        onValueChange = { password = it },
                         placeholder = { Text("Senha", fontStyle = FontStyle.Italic) },
                         colors = TextFieldDefaults.colors(),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -182,7 +173,7 @@ fun LoginScreen(onLoginAttempt: (String, String) -> Unit) {
 
 
                     Button(
-                        onClick = { onLoginAttempt(email,senha) },
+                        onClick = { onLoginAttempt(email,password) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0B1F56)),
                         shape = RoundedCornerShape(50),
                         modifier = Modifier

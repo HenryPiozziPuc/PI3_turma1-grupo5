@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
@@ -35,8 +36,10 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.material3.AlertDialog
-
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+//Pagina que lê e analisa qr codes
 class QRCodeScannerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,12 +94,10 @@ fun QRCodeScannerScreen() {
                     .background(Blue)
             ) {
                 CameraPreview { qrValue ->
-                    scannedValue = qrValue
-                    if (isQRCodeValid(qrValue)) {
-                        showSuccessDialog = true
-                    } else {
-                        showErrorDialog = true
-                    }
+                    authLoginToken(qrValue,
+                        onSuccess = { showSuccessDialog = true },
+                        onFailure = { showErrorDialog = true }
+                    )
                 }
             }
         } else {
@@ -107,7 +108,6 @@ fun QRCodeScannerScreen() {
             )
         }
 
-        // Diálogo de sucesso
         if (showSuccessDialog) {
             AlertDialog(
                 onDismissRequest = { showSuccessDialog = false },
@@ -119,7 +119,6 @@ fun QRCodeScannerScreen() {
             )
         }
 
-        // Diálogo de erro
         if (showErrorDialog) {
             AlertDialog(
                 onDismissRequest = { showErrorDialog = false },
@@ -138,7 +137,6 @@ fun QRCodeScannerScreen() {
 fun CameraPreview(
     onQRCodeScanned: (String) -> Unit = {}
 ) {
-    //val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     AndroidView(
@@ -204,6 +202,9 @@ class QRCodeAnalyzer(
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
+                barcodes.forEach { barcode ->
+                    Log.d("SuperIDAuth", "QR detectado: ${barcode.rawValue}, tamanho: ${barcode.rawValue?.length}")
+                }
                 val value = barcodes.firstOrNull()?.rawValue
                 if (value != null) {
                     alreadyScanned = true
@@ -216,6 +217,44 @@ class QRCodeAnalyzer(
     }
 }
 
-fun isQRCodeValid(qrValue: String): Boolean {
-    return qrValue.startsWith("https:")
+fun authLoginToken(
+    token: String,
+    onSuccess: () -> Unit,
+    onFailure: () -> Unit
+) {
+    val user = FirebaseAuth.getInstance().currentUser
+
+    if (user == null) {
+        onFailure()
+        return
+    }
+
+    val db = FirebaseFirestore.getInstance()
+
+    db.collection("login")
+        .whereEqualTo("loginToken", token)
+        .limit(1)
+        .get()
+        .addOnSuccessListener { result ->
+            if (!result.isEmpty) {
+                val doc = result.documents.first()
+
+                val docRef = doc.reference
+                docRef.update(
+                    mapOf(
+                        "user" to user.uid,
+                        "authenticatedAt" to FieldValue.serverTimestamp()
+                    )
+                ).addOnSuccessListener {
+                    onSuccess()
+                }.addOnFailureListener {
+                    onFailure()
+                }
+            } else {
+                onFailure()
+            }
+        }
+        .addOnFailureListener {
+            onFailure()
+        }
 }

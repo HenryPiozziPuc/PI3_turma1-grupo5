@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.example.pi3_turma1grupo5.ui.theme.BackgroundLight
 import com.example.pi3_turma1grupo5.ui.theme.LightBlue
 import com.example.pi3_turma1grupo5.ui.theme.PI3_turma1grupo5Theme
-
+//pagina simples que explica o app no primeiro uso
 class OnBoardActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,13 +80,12 @@ fun OnboardingScreen(onFinish: () -> Unit) {
         ) {
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Box central com texto menor e alinhado ao topo
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 200.dp, max = 400.dp)
                     .weight(0.6f)
-                    .background(LightBlue.copy(alpha = 0.7f)) // opcional: leve destaque visual
+                    .background(LightBlue.copy(alpha = 0.7f))
                     .padding(24.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
@@ -97,7 +96,6 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                 )
             }
 
-            // Botões
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -131,6 +129,6 @@ fun OnboardingScreen(onFinish: () -> Unit) {
 @Composable
 fun OnboardingScreenPreview() {
     PI3_turma1grupo5Theme {
-        OnboardingScreen(onFinish = {}) // preview ignora a navegação real
+        OnboardingScreen(onFinish = {})
     }
 }
