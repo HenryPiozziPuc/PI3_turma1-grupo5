@@ -60,7 +60,7 @@ import com.example.pi3_turma1grupo5.R
 import com.google.firebase.firestore.FirebaseFirestore
 
 data class SenhaError(var hasError: Boolean, val errorCode: Int)
-
+//Pagina que permite a criação de conta e cria o documento no firebase
 class SignUpActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -348,7 +348,7 @@ fun CriarConta(
                         .addOnFailureListener {
                             Toast.makeText(
                                 context,
-                                "Erro ao salvar dados no Firestore",
+                                "Erro ao criar a conta",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
