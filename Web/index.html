@@ -54,9 +54,6 @@
           }
           const { qrCode, loginToken } = await response.json();
 
-          //qrImage.src = qrCode;
-          //qrImage.alt = loginToken;
-
           document.getElementById("qr-render").innerHTML = "";
 
           new QRCode(document.getElementById("qr-render"), {

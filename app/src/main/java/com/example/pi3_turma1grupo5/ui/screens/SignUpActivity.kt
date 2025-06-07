@@ -322,9 +322,6 @@ fun CriarConta(
                         .addOnSuccessListener {
                             val senhasCollection = firestore.collection("usuarios").document(uid)
                                 .collection("categorias")
-
-
-
                             val categoriasIniciais = listOf(
                                 "Sites Web",
                                 "Aplicativos",
